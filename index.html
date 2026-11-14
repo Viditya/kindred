@@ -1,0 +1,1259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Kindred — Meet people who share your vibe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@600;700&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0f1226; --panel:#171b36; --panel2:#1f2447; --line:#2c3260;
+    --text:#eef0ff; --muted:#9aa0c7; --gold:#f5b942; --coral:#ff6b6b;
+    --teal:#2dd4bf; --violet:#8b7bff; --ok:#34d399;
+    --grad:linear-gradient(135deg,#ff6b6b 0%,#f5b942 50%,#8b7bff 100%);
+    --r:18px;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:Inter,system-ui,sans-serif;background:radial-gradient(1200px 600px at 10% -10%,#2a2470 0%,transparent 60%),radial-gradient(900px 500px at 110% 10%,#4a1e3f 0%,transparent 55%),var(--bg);color:var(--text);min-height:100vh}
+  h1,h2,h3{font-family:'Playfair Display',serif}
+  button{font-family:inherit;cursor:pointer;border:none}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px}
+
+  /* Header */
+  header{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);background:rgba(15,18,38,.75);border-bottom:1px solid var(--line)}
+  .bar{display:flex;align-items:center;justify-content:space-between;height:68px}
+  .logo{display:flex;align-items:center;gap:10px;font-family:'Playfair Display';font-size:24px;font-weight:700}
+  .logo .mark{width:36px;height:36px;border-radius:12px;background:var(--grad);display:grid;place-items:center;font-size:18px}
+  nav{display:flex;gap:6px;background:var(--panel);padding:5px;border-radius:999px;border:1px solid var(--line)}
+  nav button{background:none;color:var(--muted);padding:9px 16px;border-radius:999px;font-weight:600;font-size:14px}
+  nav button.active{background:var(--grad);color:#14142b}
+  .trust-pill{display:flex;align-items:center;gap:8px;background:var(--panel);border:1px solid var(--line);padding:7px 14px;border-radius:999px;font-size:13px;font-weight:600}
+  .trust-pill b{color:var(--gold)}
+
+  section.screen{display:none;padding:32px 0 80px;animation:fade .35s ease}
+  section.screen.active{display:block}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+  .hero{display:grid;grid-template-columns:1.2fr 1fr;gap:28px;align-items:center;margin-bottom:28px}
+  .hero h1{font-size:44px;line-height:1.1;margin-bottom:12px}
+  .hero h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p{color:var(--muted);font-size:17px;line-height:1.6;max-width:560px}
+  .steps{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+  .step{background:var(--panel);border:1px solid var(--line);padding:10px 14px;border-radius:12px;font-size:13px;color:var(--muted)}
+  .step b{color:var(--text)}
+
+  .card{background:linear-gradient(180deg,var(--panel) 0%,#141834 100%);border:1px solid var(--line);border-radius:var(--r);padding:22px}
+  .card h3{font-size:20px;margin-bottom:6px}
+  .sub{color:var(--muted);font-size:14px;line-height:1.5}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:22px}
+  .grid3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+
+  /* Social connect */
+  .socials{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+  .soc{background:var(--panel2);border:1px solid var(--line);border-radius:14px;padding:14px;text-align:left;color:var(--text);transition:.2s;position:relative}
+  .soc:hover{transform:translateY(-2px);border-color:#4a5199}
+  .soc .ic{width:38px;height:38px;border-radius:10px;display:grid;place-items:center;font-weight:800;font-size:15px;margin-bottom:10px;color:#fff}
+  .soc .nm{font-weight:600;font-size:14px}
+  .soc .st{font-size:12px;color:var(--muted);margin-top:2px}
+  .soc.on{border-color:var(--ok);box-shadow:0 0 0 1px var(--ok) inset}
+  .soc.on .st{color:var(--ok)}
+  .soc.loading .st::after{content:'';display:inline-block;width:10px;height:10px;border:2px solid var(--gold);border-top-color:transparent;border-radius:50%;margin-left:6px;animation:spin .7s linear infinite;vertical-align:-1px}
+  @keyframes spin{to{transform:rotate(360deg)}}
+  .privacy{margin-top:14px;font-size:12.5px;color:var(--muted);display:flex;gap:8px;align-items:flex-start;background:rgba(45,212,191,.07);border:1px solid rgba(45,212,191,.25);padding:10px 12px;border-radius:12px}
+
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+  .chip{background:var(--panel2);border:1px solid var(--line);padding:6px 12px;border-radius:999px;font-size:12.5px;font-weight:500;color:var(--text);animation:pop .3s ease}
+  .chip small{color:var(--muted);margin-left:4px}
+  .chip.sel{background:var(--grad);color:#14142b;border-color:transparent;font-weight:700}
+  button.chip{cursor:pointer}
+  @keyframes pop{from{transform:scale(.7);opacity:0}to{transform:none;opacity:1}}
+
+  .dna{margin-top:16px;display:grid;gap:10px}
+  .dna-row{display:grid;grid-template-columns:120px 1fr 40px;align-items:center;gap:10px;font-size:13px}
+  .track{height:9px;background:var(--panel2);border-radius:99px;overflow:hidden}
+  .fill{height:100%;border-radius:99px;background:var(--grad);width:0;transition:width .9s cubic-bezier(.2,.8,.2,1)}
+
+  /* Qualify */
+  .q{margin-top:18px}
+  .q .qt{font-weight:600;font-size:15px;margin-bottom:8px}
+  .opts{display:flex;flex-wrap:wrap;gap:8px}
+  .opt{background:var(--panel2);color:var(--text);border:1px solid var(--line);padding:9px 14px;border-radius:12px;font-size:13.5px;transition:.15s}
+  .opt:hover{border-color:#4a5199}
+  .opt.sel{background:rgba(245,185,66,.15);border-color:var(--gold);color:var(--gold);font-weight:600}
+  .verify{display:grid;gap:10px;margin-top:14px}
+  .vrow{display:flex;justify-content:space-between;align-items:center;background:var(--panel2);border:1px solid var(--line);padding:12px 14px;border-radius:12px;font-size:14px}
+  .vrow button{background:var(--violet);color:#fff;padding:7px 14px;border-radius:10px;font-weight:600;font-size:13px}
+  .vrow.done button{background:var(--ok);color:#06281c}
+  .ring{width:150px;height:150px;margin:6px auto 4px;position:relative}
+  .ring svg{transform:rotate(-90deg)}
+  .ring .val{position:absolute;inset:0;display:grid;place-items:center;text-align:center}
+  .ring .val b{font-size:38px;font-family:'Playfair Display'}
+  .ring .val small{display:block;color:var(--muted);font-size:12px;margin-top:-6px}
+  .tier{text-align:center;font-weight:700;color:var(--gold);margin-top:4px}
+  .cta{background:var(--grad);color:#14142b;font-weight:700;padding:13px 22px;border-radius:14px;font-size:15px;transition:.2s}
+  .cta:hover{transform:translateY(-1px);box-shadow:0 10px 30px rgba(245,185,66,.25)}
+  .ghost{background:var(--panel2);color:var(--text);border:1px solid var(--line);padding:12px 18px;border-radius:14px;font-weight:600}
+
+  /* Discover */
+  .filters{display:flex;gap:8px;flex-wrap:wrap;margin:6px 0 22px}
+  .profiles{display:grid;grid-template-columns:repeat(auto-fill,minmax(340px,1fr));gap:22px}
+  .pcard{background:var(--panel);border:1px solid var(--line);border-radius:22px;overflow:hidden;transition:.25s;display:flex;flex-direction:column}
+  .pcard:hover{transform:translateY(-4px);box-shadow:0 20px 50px rgba(0,0,0,.35)}
+  .cover{height:170px;position:relative;display:flex;align-items:flex-end;padding:16px}
+  .avatar{width:74px;height:74px;border-radius:22px;display:grid;place-items:center;font-family:'Playfair Display';font-size:30px;font-weight:700;color:#fff;border:3px solid rgba(255,255,255,.85);box-shadow:0 8px 20px rgba(0,0,0,.3)}
+  .score{position:absolute;top:14px;right:14px;background:rgba(15,18,38,.8);backdrop-filter:blur(8px);padding:8px 12px;border-radius:14px;text-align:center}
+  .score b{font-size:22px;font-family:'Playfair Display';color:var(--gold)}
+  .score small{display:block;font-size:10px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+  .badge{position:absolute;top:14px;left:14px;background:rgba(52,211,153,.18);color:var(--ok);border:1px solid rgba(52,211,153,.4);font-size:11px;font-weight:700;padding:5px 10px;border-radius:999px}
+  .pbody{padding:16px 18px 18px;flex:1;display:flex;flex-direction:column}
+  .pname{font-family:'Playfair Display';font-size:22px;font-weight:700}
+  .pmeta{color:var(--muted);font-size:13px;margin:3px 0 10px}
+  .intent{display:inline-flex;gap:6px;flex-wrap:wrap}
+  .intent span{font-size:11.5px;font-weight:600;padding:4px 9px;border-radius:8px;background:rgba(139,123,255,.15);color:#b9afff}
+  .breakdown{display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin:14px 0}
+  .bd{font-size:12px;color:var(--muted)}
+  .bd .track{height:6px;margin-top:4px}
+  .shared{font-size:12.5px;color:var(--muted);margin-bottom:10px}
+  .shared b{color:var(--text)}
+  .ice{background:rgba(245,185,66,.08);border:1px dashed rgba(245,185,66,.4);border-radius:12px;padding:10px 12px;font-size:13px;line-height:1.45;margin-bottom:14px}
+  .ice i{color:var(--gold);font-style:normal;font-weight:700;font-size:11px;letter-spacing:.06em;display:block;margin-bottom:3px}
+  .actions{display:flex;gap:8px;margin-top:auto}
+  .actions button{flex:1;padding:11px;border-radius:12px;font-weight:700;font-size:13.5px}
+  .pass{background:var(--panel2);color:var(--muted);border:1px solid var(--line)!important}
+  .like{background:rgba(255,107,107,.15);color:var(--coral);border:1px solid rgba(255,107,107,.4)!important}
+  .plan{background:var(--grad);color:#14142b}
+  .locked{position:relative}
+  .locked-overlay{position:absolute;inset:0;background:rgba(15,18,38,.82);backdrop-filter:blur(6px);border-radius:22px;display:grid;place-items:center;text-align:center;padding:30px;z-index:3}
+
+  /* Meetups */
+  .mcard{background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden}
+  .mtop{height:120px;padding:16px;display:flex;flex-direction:column;justify-content:space-between}
+  .mtype{align-self:flex-start;background:rgba(0,0,0,.35);padding:5px 10px;border-radius:999px;font-size:11.5px;font-weight:700}
+  .mtitle{font-family:'Playfair Display';font-size:20px;font-weight:700;text-shadow:0 2px 10px rgba(0,0,0,.4)}
+  .mbody{padding:14px 16px 16px}
+  .mrow{display:flex;justify-content:space-between;font-size:13px;color:var(--muted);margin:4px 0}
+  .faces{display:flex;margin:10px 0}
+  .faces span{width:30px;height:30px;border-radius:50%;border:2px solid var(--panel);margin-left:-8px;display:grid;place-items:center;font-size:11px;font-weight:700;color:#fff}
+  .faces span:first-child{margin-left:0}
+  .rules{font-size:12px;color:var(--teal);margin:6px 0 12px}
+
+  /* Modal */
+  .modal{position:fixed;inset:0;background:rgba(5,6,18,.7);backdrop-filter:blur(6px);display:none;place-items:center;z-index:50;padding:20px}
+  .modal.open{display:grid}
+  .mbox{background:var(--panel);border:1px solid var(--line);border-radius:24px;max-width:520px;width:100%;padding:26px;animation:fade .3s}
+  .mbox h2{font-size:28px;margin-bottom:6px}
+  .pairs{display:flex;justify-content:center;gap:-10px;margin:10px 0 16px}
+  .pairs .avatar{margin:0 -6px}
+  .slot{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:10px 0}
+  .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--panel2);border:1px solid var(--gold);color:var(--text);padding:12px 20px;border-radius:14px;font-weight:600;font-size:14px;transition:.35s;z-index:60}
+  .toast.show{transform:translateX(-50%) translateY(0)}
+
+  /* Explore */
+  .xhero{display:grid;grid-template-columns:1.05fr 1fr;gap:34px;align-items:center}
+  .xcollage{display:grid;grid-template-columns:1fr 1fr 1fr;grid-template-rows:170px 170px 130px;gap:10px}
+  .xcollage div{border-radius:20px;background-size:cover;background-position:center;position:relative;overflow:hidden;box-shadow:0 14px 40px rgba(0,0,0,.35);animation:fade .6s ease both}
+  .xcollage div:nth-child(1){grid-row:span 2}
+  .xcollage div:nth-child(4){grid-column:span 2}
+  .xcollage div:nth-child(5){grid-column:span 3}
+  .xcollage div span{position:absolute;left:10px;bottom:10px;background:rgba(15,18,38,.75);backdrop-filter:blur(6px);padding:4px 10px;border-radius:999px;font-size:11.5px;font-weight:600}
+  .xhero-txt h1{font-size:46px;line-height:1.08;margin:10px 0 12px}
+  .xhero-txt h1 span{background:var(--grad);-webkit-background-clip:text;background-clip:text;color:transparent;display:inline-block;animation:pop .4s}
+  .xhero-txt p{color:var(--muted);font-size:16.5px;line-height:1.6}
+  .live-dot{color:var(--coral);font-weight:800;font-size:12px;letter-spacing:.12em;animation:blink 1.6s infinite}
+  @keyframes blink{50%{opacity:.45}}
+  .stats{display:flex;gap:26px;margin-top:24px}
+  .stats b{display:block;font-family:'Playfair Display';font-size:26px;color:var(--gold)}
+  .stats span{font-size:12px;color:var(--muted)}
+  .joke{margin-top:30px;display:flex;gap:16px;align-items:center;background:linear-gradient(90deg,rgba(245,185,66,.12),rgba(139,123,255,.12));border:1px solid rgba(245,185,66,.3);border-radius:16px;padding:14px 18px;flex-wrap:wrap}
+  .joke span{font-size:11px;font-weight:800;letter-spacing:.1em;color:var(--gold)}
+  .joke p{flex:1;font-size:15px;min-width:240px}
+  .joke button{background:none;color:var(--gold);font-weight:700;font-size:13px}
+  .mood{display:flex;gap:8px;overflow-x:auto;padding:8px 0 18px;scrollbar-width:none}
+  .mood button{flex:none;background:var(--panel);border:1px solid var(--line);color:var(--text);padding:10px 16px;border-radius:999px;font-weight:600;font-size:13.5px;transition:.2s}
+  .mood button.sel{background:var(--grad);color:#14142b;border-color:transparent}
+  .xgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:20px}
+  .xcard{background:var(--panel);border:1px solid var(--line);border-radius:20px;overflow:hidden;transition:.25s;animation:fade .4s both}
+  .xcard:hover{transform:translateY(-5px) rotate(-.3deg);box-shadow:0 20px 50px rgba(0,0,0,.4)}
+  .ximg{height:180px;background-size:cover;background-position:center;position:relative}
+  .ximg::after{content:'';position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(15,18,38,.9))}
+  .ximg .cat{position:absolute;top:12px;left:12px;z-index:1;background:rgba(15,18,38,.75);backdrop-filter:blur(6px);padding:5px 10px;border-radius:999px;font-size:11.5px;font-weight:700}
+  .ximg .heart{position:absolute;top:10px;right:10px;z-index:1;width:34px;height:34px;border-radius:50%;background:rgba(15,18,38,.65);color:#fff;font-size:16px}
+  .ximg .heart.on{background:var(--coral)}
+  .ximg h4{position:absolute;bottom:10px;left:14px;right:14px;z-index:1;font-family:'Playfair Display';font-size:19px;line-height:1.2}
+  .xbody{padding:12px 14px 14px}
+  .xbody .mrow{margin:3px 0}
+  .xbody p{font-size:13px;color:var(--muted);line-height:1.45;margin:6px 0 10px}
+  .going{display:flex;align-items:center;gap:8px;font-size:12px;color:var(--muted)}
+  .going .faces{margin:0}
+  .going .faces span{width:24px;height:24px;font-size:10px}
+  .xbody .cta{width:100%;padding:10px;font-size:13.5px;margin-top:10px}
+  .spin{width:240px;height:240px;margin:6px auto 14px;border-radius:50%;border:6px solid var(--gold);position:relative;transition:transform 2.2s cubic-bezier(.17,.67,.2,1);background:conic-gradient(#ff6b6b 0 45deg,#f5b942 0 90deg,#8b7bff 0 135deg,#2dd4bf 0 180deg,#ff6b6b 0 225deg,#f5b942 0 270deg,#8b7bff 0 315deg,#2dd4bf 0 360deg)}
+  .spin-wrap{position:relative}
+  .spin-wrap::before{content:'▼';position:absolute;top:-6px;left:50%;transform:translateX(-50%);color:#fff;font-size:24px;z-index:2}
+  .spin-res{text-align:center;min-height:70px}
+  .spin-res h3{font-size:22px;color:var(--gold)}
+  @media(max-width:900px){.xhero{grid-template-columns:1fr}.xhero-txt h1{font-size:34px}}
+
+  /* Auth + Profile */
+  .me-btn{width:40px;height:40px;border-radius:14px;background:var(--grad);color:#14142b;font-weight:800;font-family:'Playfair Display';font-size:18px}
+  #auth{position:fixed;inset:0;z-index:40;display:none;place-items:center;padding:20px;background:radial-gradient(900px 500px at 20% 0%,#2a2470 0%,transparent 60%),radial-gradient(800px 500px at 100% 100%,#4a1e3f 0%,transparent 55%),var(--bg)}
+  #auth.open{display:grid}
+  .auth-box{display:grid;grid-template-columns:1.1fr 1fr;max-width:940px;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:28px;overflow:hidden;box-shadow:0 30px 80px rgba(0,0,0,.45)}
+  .auth-art{background:var(--grad);padding:40px;color:#14142b;display:flex;flex-direction:column;justify-content:space-between;min-height:520px}
+  .auth-art h1{font-size:40px;line-height:1.1}
+  .auth-art .bubbles{display:flex;flex-wrap:wrap;gap:8px}
+  .auth-art .bubbles span{background:rgba(20,20,43,.14);padding:7px 12px;border-radius:999px;font-weight:600;font-size:13px}
+  .auth-form{padding:38px}
+  .tabs{display:flex;background:var(--panel2);border-radius:12px;padding:4px;margin-bottom:22px}
+  .tabs button{flex:1;padding:10px;border-radius:9px;background:none;color:var(--muted);font-weight:700}
+  .tabs button.active{background:var(--bg);color:var(--text)}
+  .field{margin-bottom:14px}
+  .field label{display:block;font-size:12.5px;color:var(--muted);margin-bottom:6px;font-weight:600}
+  .field input,.field textarea{width:100%;background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:12px 14px;border-radius:12px;font:inherit;font-size:14.5px;outline:none}
+  .field input:focus,.field textarea:focus{border-color:var(--gold)}
+  .err{color:var(--coral);font-size:13px;min-height:18px;margin:4px 0 8px}
+  .or{text-align:center;color:var(--muted);font-size:12px;margin:16px 0}
+  .ssos{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+  .ssos button{background:var(--panel2);border:1px solid var(--line);color:var(--text);padding:10px;border-radius:12px;font-weight:600;font-size:13px}
+  .phead{display:flex;gap:22px;align-items:center;margin-bottom:22px}
+  .phead .avatar{width:110px;height:110px;font-size:46px;border-radius:30px}
+  .phead h2{font-size:34px}
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  .chlist{display:grid;gap:8px;margin-top:12px}
+  .chrow{display:flex;align-items:center;gap:12px;background:var(--panel2);border:1px solid var(--line);padding:10px 12px;border-radius:12px;font-size:14px}
+  .chrow .ic{width:30px;height:30px;border-radius:8px;display:grid;place-items:center;color:#fff;font-weight:800;font-size:12px}
+  .chrow .mode{margin-left:auto;font-size:11px;font-weight:700;padding:3px 8px;border-radius:6px}
+  .mode.live{background:rgba(52,211,153,.15);color:var(--ok)} .mode.demo{background:rgba(245,185,66,.15);color:var(--gold)}
+  .chrow button{background:none;color:var(--muted);font-size:12px;text-decoration:underline}
+  pre.code{background:#0a0c1c;border:1px solid var(--line);border-radius:12px;padding:12px;font-size:12px;overflow:auto;color:#c9cdf5;margin-top:10px;white-space:pre-wrap;word-break:break-all}
+  .conn{font-size:12px;display:inline-flex;align-items:center;gap:6px;color:var(--muted)}
+  .conn i{width:8px;height:8px;border-radius:50%;background:var(--coral);display:inline-block}
+  .conn.on i{background:var(--ok)}
+  @media(max-width:900px){.auth-box{grid-template-columns:1fr}.auth-art{min-height:auto}.row2{grid-template-columns:1fr}}
+
+  .section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:6px}
+  .section-head h2{font-size:32px}
+  .empty{color:var(--muted);text-align:center;padding:50px}
+
+  @media(max-width:900px){
+    .hero,.grid2,.grid3{grid-template-columns:1fr}
+    .socials{grid-template-columns:repeat(2,1fr)}
+    nav button{padding:8px 10px;font-size:12px}
+    .trust-pill{display:none}
+    .hero h1{font-size:34px}
+  }
+
+  /* ---- Floating concierge button + panel ---- */
+  #concierge-fab{position:fixed;bottom:28px;right:28px;z-index:55;width:58px;height:58px;border-radius:50%;background:var(--grad);color:#14142b;font-size:24px;box-shadow:0 8px 28px rgba(245,185,66,.35);transition:.2s;border:none}
+  #concierge-fab:hover{transform:scale(1.08)}
+  #concierge-panel{position:fixed;bottom:98px;right:28px;z-index:55;width:380px;max-height:580px;display:flex;flex-direction:column;background:var(--panel);border:1px solid var(--line);border-radius:24px;box-shadow:0 20px 60px rgba(0,0,0,.45);overflow:hidden;transform:translateY(20px) scale(.96);opacity:0;pointer-events:none;transition:.25s cubic-bezier(.2,.8,.2,1)}
+  #concierge-panel.open{transform:none;opacity:1;pointer-events:all}
+  .cp-head{background:var(--grad);padding:14px 18px;display:flex;justify-content:space-between;align-items:center;color:#14142b}
+  .cp-head h3{font-family:'Playfair Display';font-size:19px}
+  .cp-head small{font-size:11px;font-weight:700;opacity:.75}
+  .cp-head button{background:none;color:#14142b;font-size:20px;line-height:1;padding:0 2px}
+  .cp-msgs{flex:1;overflow-y:auto;padding:14px 16px;display:flex;flex-direction:column;gap:10px}
+  .cp-msg{padding:10px 13px;border-radius:16px;font-size:13.5px;line-height:1.5;max-width:92%;animation:pop .25s}
+  .cp-msg.user{background:var(--violet);color:#fff;align-self:flex-end;border-radius:16px 16px 4px 16px}
+  .cp-msg.bot{background:var(--panel2);color:var(--text);align-self:flex-start;border-radius:16px 16px 16px 4px}
+  .cp-msg.bot .cp-powered{font-size:10.5px;color:var(--gold);margin-top:4px;font-weight:600}
+  .cp-cards{display:flex;flex-direction:column;gap:6px;margin-top:6px}
+  .cp-card{background:rgba(139,123,255,.1);border:1px solid rgba(139,123,255,.3);border-radius:12px;padding:9px 11px;font-size:12.5px}
+  .cp-card b{color:var(--violet)}
+  .cp-event{background:rgba(245,185,66,.08);border:1px dashed rgba(245,185,66,.35);border-radius:12px;padding:9px 11px;font-size:12.5px;margin-top:4px}
+  .cp-event b{color:var(--gold)}
+  .cp-foot{padding:10px 12px;border-top:1px solid var(--line);display:flex;gap:8px}
+  .cp-foot input{flex:1;background:var(--panel2);border:1px solid var(--line);border-radius:12px;padding:9px 12px;color:var(--text);font:inherit;font-size:13.5px;outline:none}
+  .cp-foot input:focus{border-color:var(--gold)}
+  .cp-foot button{background:var(--grad);color:#14142b;border-radius:12px;padding:9px 14px;font-weight:700;font-size:13px}
+  .cp-typing{display:flex;gap:5px;align-items:center;padding:4px 0}
+  .cp-typing span{width:7px;height:7px;border-radius:50%;background:var(--muted);animation:bounce .9s infinite}
+  .cp-typing span:nth-child(2){animation-delay:.18s}
+  .cp-typing span:nth-child(3){animation-delay:.36s}
+  @keyframes bounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+
+  /* ---- Confetti ---- */
+  .confetti-piece{position:fixed;width:9px;height:9px;border-radius:2px;pointer-events:none;z-index:9999;animation:confetti-fall 2.2s ease-in forwards}
+  @keyframes confetti-fall{0%{transform:translateY(-10px) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+
+  /* ---- Vibe Twin badge ---- */
+  .vibe-twin{position:absolute;top:14px;right:14px;background:linear-gradient(135deg,#f5b942,#ff6b6b);color:#14142b;font-size:11px;font-weight:800;padding:5px 10px;border-radius:999px;box-shadow:0 4px 14px rgba(245,185,66,.4);animation:pop .4s}
+
+  /* ---- Vibe Card canvas ---- */
+  #vibeCardBtn{background:var(--grad);color:#14142b;font-weight:700;padding:11px 18px;border-radius:14px;font-size:13.5px;width:100%;margin-top:12px}
+
+  @media(max-width:600px){#concierge-panel{width:calc(100vw - 24px);right:12px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap bar">
+    <div class="logo"><div class="mark">✦</div>Kindred</div>
+    <nav id="nav">
+      <button data-go="explore" class="active">✦ Explore</button>
+      <button data-go="connect">Connect</button>
+      <button data-go="qualify">Vibe Check</button>
+      <button data-go="discover">Matches</button>
+      <button data-go="meetups">Meetups</button>
+    </nav>
+    <div style="display:flex;gap:10px;align-items:center">
+      <div class="trust-pill">Trust <b id="pillTrust">0</b></div>
+      <button class="me-btn" data-go="profile" id="meBtn" title="My profile">?</button>
+    </div>
+  </div>
+</header>
+
+<main class="wrap">
+
+<!-- IBM Values banner — visible on every screen load -->
+<div id="ibm-banner" style="background:linear-gradient(90deg,#0530ad 0%,#0043ce 60%,#4589ff 100%);padding:9px 20px;display:flex;align-items:center;justify-content:center;gap:18px;flex-wrap:wrap;position:sticky;top:68px;z-index:19;border-bottom:1px solid rgba(69,137,255,.4)">
+  <span style="font-size:12px;font-weight:700;color:#fff;letter-spacing:.06em">IBM BOBaTHON 2026</span>
+  <span style="color:rgba(255,255,255,.4);font-size:12px">|</span>
+  <span style="font-size:12px;color:#a6c8ff;font-weight:600">🤝 Built with IBM Bob &nbsp;·&nbsp; ⚡ Powered by IBM watsonx.ai Granite &nbsp;·&nbsp; 🔒 Responsible AI &nbsp;·&nbsp; 🌍 Innovation that matters</span>
+  <button onclick="this.parentElement.style.display='none'" style="background:none;color:rgba(255,255,255,.5);font-size:16px;line-height:1;margin-left:8px">✕</button>
+</div>
+
+<!-- ============ 0. EXPLORE ============ -->
+<section class="screen active" id="explore">
+  <div class="xhero">
+    <div class="xcollage" id="collage"></div>
+    <div class="xhero-txt">
+      <div class="live-dot">● LIVE IN BENGALURU</div>
+      <h1>Your city is full of <span id="rotWord">people</span> waiting to meet you.</h1>
+      <p>Sunrise treks, filter-coffee chats, rooftop gigs, temple trails and slow-dating suppers. Find your people, then go and do something wonderful together.</p>
+      <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:18px">
+        <button class="cta" id="spinBtn">🎡 Spin a date idea</button>
+        <button class="ghost" data-go="discover">See my matches →</button>
+      </div>
+      <div class="stats"><div><b>2,400+</b><span>verified members</span></div><div><b>180</b><span>meetups this month</span></div><div><b>4.8★</b><span>avg. meetup rating</span></div></div>
+    </div>
+  </div>
+
+  <div class="joke" id="joke"><span>😂 BANGALORE JOKE OF THE DAY</span><p id="jokeTxt"></p><button id="nextJoke">Another one →</button></div>
+
+  <div class="grid3" style="margin-top:30px">
+    <div class="card"><h3>🧠 AI that serves people, not algorithms</h3><p class="sub">8 social signals → one Vibe DNA. Matches come from who you really are — not from an engagement-optimising black box. <b style="color:var(--teal)">Responsible AI by design.</b></p></div>
+    <div class="card"><h3>🛡️ Trust is not a feature — it's the product</h3><p class="sub">DigiLocker ID, live selfie, work email, Trust Score gating. Every meetup is verified-only. <b style="color:var(--teal)">IBM value #1: Trust &amp; responsibility.</b></p></div>
+    <div class="card" style="border-color:rgba(245,185,66,.4);background:linear-gradient(180deg,rgba(245,185,66,.07) 0%,var(--panel) 100%)"><h3>🤖 Powered by <span style="color:var(--gold)">IBM watsonx</span> &amp; <span style="color:var(--gold)">IBM Bob</span></h3><p class="sub">Built <i>with</i> Bob. Runs <i>through</i> Bob via 15 MCP tools. The world's first IBM Bob–native social graph.</p></div>
+  </div>
+
+  <!-- IBM Values emotional section -->
+  <div style="margin:32px 0 0;background:linear-gradient(135deg,rgba(5,48,173,.18) 0%,rgba(139,123,255,.12) 100%);border:1px solid rgba(69,137,255,.3);border-radius:20px;padding:24px 28px">
+    <div style="display:flex;align-items:flex-start;gap:20px;flex-wrap:wrap">
+      <div style="flex:1;min-width:220px">
+        <div style="font-size:11px;font-weight:800;letter-spacing:.12em;color:#4589ff;margin-bottom:8px">IBM BOBaTHON 2026 — OUR MISSION</div>
+        <h2 style="font-size:26px;line-height:1.2;margin-bottom:10px">Technology that brings <span style="background:linear-gradient(90deg,#4589ff,#8b7bff);-webkit-background-clip:text;background-clip:text;color:transparent">people together.</span></h2>
+        <p style="color:var(--muted);font-size:14px;line-height:1.65">IBM's greatest invention isn't a mainframe or a language model — it's the conviction that <b style="color:var(--text)">technology exists to serve humanity.</b> Kindred is that conviction made tangible: an AI that fights loneliness, keeps people safe, and creates real human connections in the city of Bengaluru.</p>
+      </div>
+      <div style="display:grid;gap:10px;min-width:220px">
+        <div style="background:rgba(69,137,255,.1);border:1px solid rgba(69,137,255,.25);border-radius:12px;padding:12px 14px"><div style="font-size:11px;font-weight:700;color:#4589ff;margin-bottom:3px">IBM VALUE 1</div><div style="font-size:13.5px;font-weight:600">Trust &amp; responsibility in AI</div><div style="font-size:12px;color:var(--muted)">Every match is consent-first, verified and explainable.</div></div>
+        <div style="background:rgba(139,123,255,.1);border:1px solid rgba(139,123,255,.25);border-radius:12px;padding:12px 14px"><div style="font-size:11px;font-weight:700;color:#8b7bff;margin-bottom:3px">IBM VALUE 2</div><div style="font-size:13.5px;font-weight:600">Dedication to client success</div><div style="font-size:12px;color:var(--muted)">The user's safety and happiness is the only metric that counts.</div></div>
+        <div style="background:rgba(245,185,66,.08);border:1px solid rgba(245,185,66,.25);border-radius:12px;padding:12px 14px"><div style="font-size:11px;font-weight:700;color:var(--gold);margin-bottom:3px">IBM VALUE 3</div><div style="font-size:13.5px;font-weight:600">Innovation that matters</div><div style="font-size:12px;color:var(--muted)">The first MCP-native social graph — built live at BOBaTHON with IBM Bob.</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-head" style="margin-top:34px"><div><h2>What's happening around Bangalore</h2><p class="sub">Hand-picked experiences. Go solo and meet people there, or bring a match.</p></div></div>
+  <div class="mood" id="moods"></div>
+  <div class="xgrid" id="xgrid"></div>
+</section>
+
+<!-- ============ 1. CONNECT ============ -->
+<section class="screen" id="connect">
+  <div class="hero">
+    <div>
+      <h1>Meet people who <span>actually share your vibe.</span></h1>
+      <p>Kindred reads the signals you already put into the world — the music you play, the trails you run, the books you finish — and introduces you to people you'd genuinely enjoy meeting. Coffee chats, treks, trips, friendship… or something more.</p>
+      <div class="steps">
+        <div class="step"><b>Connect</b> your socials</div>
+        <div class="step"><b>Qualify</b> with a vibe check</div>
+        <div class="step"><b>Match</b> on real compatibility</div>
+        <div class="step"><b>Meet</b> safely, IRL</div>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Your Vibe DNA</h3>
+      <p class="sub">Built live from the channels you connect.</p>
+      <div class="dna" id="dna"></div>
+    </div>
+  </div>
+
+  <div class="grid2">
+    <div class="card">
+      <h3>Connect your channels</h3>
+      <p class="sub">Tap to link. The more you connect, the sharper your matches.</p>
+      <div class="socials" id="socials"></div>
+      <div class="privacy">🔒 <span><b>Consent-first.</b> We only read what you authorise via each platform's official login, extract interest <i>signals</i> (not posts or messages), and you can disconnect anytime. Nothing is ever posted on your behalf.</span></div>
+    </div>
+    <div class="card">
+      <h3>Interests we discovered</h3>
+      <p class="sub">Tap any chip to remove it — you're always in control.</p>
+      <div class="chips" id="interests"><span class="sub" style="margin-top:6px">Connect a channel to see your interests appear here ✨</span></div>
+      <div style="margin-top:22px;display:flex;gap:10px">
+        <button class="cta" data-go="qualify">Continue to Vibe Check →</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 2. QUALIFY ============ -->
+<section class="screen" id="qualify">
+  <div class="section-head"><div><h2>The Vibe Check</h2><p class="sub">Two minutes. It's how we keep every meetup intentional, safe and engaging.</p></div></div>
+  <div class="grid2" style="margin-top:18px;grid-template-columns:1.4fr 1fr">
+    <div class="card" id="quiz"></div>
+    <div>
+      <div class="card" style="margin-bottom:22px">
+        <h3 style="text-align:center">Your Trust Score</h3>
+        <div class="ring">
+          <svg width="150" height="150"><circle cx="75" cy="75" r="64" stroke="#1f2447" stroke-width="12" fill="none"/>
+            <circle id="ringArc" cx="75" cy="75" r="64" stroke="url(#g)" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="402" stroke-dashoffset="402" style="transition:stroke-dashoffset 1s"/>
+            <defs><linearGradient id="g"><stop offset="0" stop-color="#ff6b6b"/><stop offset=".5" stop-color="#f5b942"/><stop offset="1" stop-color="#8b7bff"/></linearGradient></defs></svg>
+          <div class="val"><div><b id="trustNum">0</b><small>/ 100</small></div></div>
+        </div>
+        <div class="tier" id="tier">Unverified</div>
+        <p class="sub" style="text-align:center;margin-top:6px">Score 60+ unlocks Discover. 80+ unlocks curated group trips.</p>
+      </div>
+      <div class="card">
+        <h3>Verify you're real</h3>
+        <div class="verify" id="verify"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ 3. DISCOVER ============ -->
+<section class="screen" id="discover">
+  <div class="section-head"><div><h2>Your matches</h2><p class="sub">Ranked by our compatibility engine — interests, intent, values and social signals.</p></div></div>
+  <div class="filters" id="filters"></div>
+  <div class="profiles" id="profiles"></div>
+</section>
+
+<!-- ============ 4. MEETUPS ============ -->
+<section class="screen" id="meetups">
+  <div class="section-head"><div><h2>Curated meetups</h2><p class="sub">Small, hosted, verified-only groups. The easiest way to meet someone is doing something you both love.</p></div></div>
+  <div class="filters" id="mfilters"></div>
+  <div class="grid3" id="mlist"></div>
+</section>
+
+<!-- ============ PROFILE ============ -->
+<section class="screen" id="profile">
+  <div class="phead">
+    <div class="avatar" id="pAvatar" style="background:var(--grad)">?</div>
+    <div>
+      <h2 id="pName">Your profile</h2>
+      <div class="sub" id="pEmail"></div>
+      <div style="margin-top:8px;display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <span class="badge" style="position:static" id="pTier">Trust 0</span>
+        <span class="conn" id="pConn"><i></i>Offline demo</span>
+        <button class="ghost" id="logout" style="padding:7px 14px;font-size:13px">Log out</button>
+      </div>
+    </div>
+  </div>
+  <div class="grid2" style="grid-template-columns:1.25fr 1fr">
+    <div class="card">
+      <h3>About you</h3>
+      <p class="sub">This is what your matches see first.</p>
+      <div style="margin-top:16px">
+        <div class="row2">
+          <div class="field"><label>Name</label><input id="fName"></div>
+          <div class="field"><label>Age</label><input id="fAge" type="number" min="18" max="99"></div>
+        </div>
+        <div class="row2">
+          <div class="field"><label>City / area</label><input id="fCity"></div>
+          <div class="field"><label>Work</label><input id="fJob" placeholder="e.g. Founder, Ireu Group"></div>
+        </div>
+        <div class="field"><label>Bio</label><textarea id="fBio" rows="3" placeholder="Two lines about what makes a great Sunday for you…"></textarea></div>
+        <div class="field"><label>Open to</label><div class="chips" id="fIntent" style="margin-top:0"></div></div>
+        <button class="cta" id="saveProfile">Save profile</button>
+      </div>
+      <h3 style="margin-top:28px">Interests</h3>
+      <div class="chips" id="pInterests"></div>
+    </div>
+    <div>
+      <div class="card" style="margin-bottom:22px">
+        <h3>Connected channels</h3>
+        <p class="sub">Revoke any channel to delete everything we got from it.</p>
+        <div class="chlist" id="pChannels"></div>
+        <button class="ghost" data-go="connect" style="margin-top:12px;width:100%">+ Connect more</button>
+      </div>
+      <div class="card" style="margin-bottom:22px">
+        <h3>Vibe DNA</h3>
+        <div class="dna" id="pDna"></div>
+      </div>
+      <div class="card" style="border-color:rgba(69,137,255,.5);background:linear-gradient(180deg,rgba(5,48,173,.12) 0%,var(--panel) 100%)">
+        <div style="font-size:10.5px;font-weight:800;letter-spacing:.12em;color:#4589ff;margin-bottom:6px">⚡ IBM BOBaTHON LIVE DEMO</div>
+        <h3>Connect IBM Bob via MCP</h3>
+        <p class="sub">Your 15 Kindred tools are live. Paste this config into IBM Bob and ask it to find your matches, plan a date, and explore Bangalore — all through natural language.</p>
+        <pre class="code" id="mcpCfg">Log in (server running) to get your personal MCP config.</pre>
+        <button class="cta" id="copyMcp" style="margin-top:10px;width:100%;background:linear-gradient(90deg,#0043ce,#4589ff);font-size:14px;padding:14px">📋 Copy &amp; paste into IBM Bob →</button>
+        <div style="margin-top:10px;background:rgba(69,137,255,.08);border:1px solid rgba(69,137,255,.2);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--muted);line-height:1.6">
+          <b style="color:#4589ff">IBM Bob → Settings → MCP Servers → paste JSON</b><br>
+          Then type: <i style="color:var(--gold)">"Use find_matches for Treks &amp; outdoors"</i><br>
+          Then: <i style="color:var(--gold)">"Use plan_date with Rohan, trekking, low budget"</i>
+        </div>
+      </div>
+      <div class="card" style="margin-top:22px">
+        <h3>🎨 My Vibe Card</h3>
+        <p class="sub">Download a shareable image of your Vibe DNA — great for sharing with matches.</p>
+        <button id="vibeCardBtn">⬇ Download Vibe Card</button>
+      </div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<!-- IBM Footer -->
+<footer style="margin-top:60px;border-top:1px solid var(--line);padding:22px 20px;text-align:center;background:rgba(5,48,173,.06)">
+  <div style="max-width:1180px;margin:0 auto;display:flex;flex-wrap:wrap;align-items:center;justify-content:center;gap:16px">
+    <span style="font-size:13px;font-weight:700;color:#4589ff">IBM BOBaTHON 2026</span>
+    <span style="color:var(--line)">|</span>
+    <span style="font-size:12.5px;color:var(--muted)">Built with <b style="color:var(--gold)">IBM Bob</b> &nbsp;·&nbsp; Powered by <b style="color:var(--gold)">IBM watsonx.ai Granite</b> &nbsp;·&nbsp; 15 MCP tools &nbsp;·&nbsp; Responsible AI</span>
+    <span style="color:var(--line)">|</span>
+    <span style="font-size:12px;color:var(--muted);font-style:italic">"Technology exists to serve humanity." — IBM</span>
+    <span style="color:var(--line)">|</span>
+    <a href="https://github.com/thejasvi-laksh" target="_blank" style="font-size:12.5px;color:#4589ff;font-weight:700;text-decoration:none">⭐ github.com/thejasvi-laksh</a>
+  </div>
+</footer>
+
+<!-- ============ AUTH ============ -->
+<div id="auth">
+  <div class="auth-box">
+    <div class="auth-art">
+      <div class="logo" style="color:#14142b"><div class="mark" style="background:#14142b;color:#f5b942">✦</div>Kindred</div>
+      <div>
+        <h1>Find your people.<br>Then go meet them.</h1>
+        <p style="margin:14px 0 20px;font-weight:500;opacity:.8">Coffee chats, sunrise treks, weekend trips, friendship, or something more. Matched on who you really are.</p>
+        <div class="bubbles"><span>☕ Coffee chats</span><span>🥾 Treks</span><span>🧭 Travel</span><span>💛 Dating</span><span>💍 Marriage-minded</span><span>🤝 Friendship</span></div>
+      </div>
+      <div style="font-size:12px;font-weight:600;opacity:.7">✓ Verified members · Consent-first · Safe-meet built in · Powered by IBM watsonx &amp; IBM Bob</div>
+    </div>
+    <div class="auth-form">
+      <div class="tabs"><button class="active" data-tab="login">Log in</button><button data-tab="signup">Sign up</button></div>
+      <form id="authForm">
+        <div class="field" id="nameField" style="display:none"><label>Your name</label><input id="aName" placeholder="Thejasvi"></div>
+        <div class="field"><label>Email</label><input id="aEmail" type="email" required placeholder="you@example.com"></div>
+        <div class="field"><label>Password</label><input id="aPass" type="password" required minlength="6" placeholder="6+ characters"></div>
+        <div class="err" id="aErr"></div>
+        <button class="cta" style="width:100%" id="aBtn">Log in</button>
+      </form>
+      <div class="or">— or —</div>
+      <button class="ghost" style="width:100%" id="demoBtn">✦ Try demo — demo@kindred.app / demo1234</button>
+      <p class="sub" style="font-size:11.5px;margin-top:14px">Server: <span id="apiLbl"></span> <span class="conn" id="aConn"><i></i> checking…</span></p>
+    </div>
+  </div>
+</div>
+
+<!-- Concierge FAB -->
+<button id="concierge-fab" title="Ask Kindred">✦</button>
+
+<!-- Concierge Panel -->
+<div id="concierge-panel">
+  <div class="cp-head">
+    <div><h3>✦ Ask Kindred</h3><small>IBM watsonx.ai Granite · Built with IBM Bob</small></div>
+    <button id="concierge-close">✕</button>
+  </div>
+  <div class="cp-msgs" id="cp-msgs">
+    <div class="cp-msg bot">Hey! 👋 I'm your Kindred AI concierge — powered by <b>IBM watsonx.ai</b>. Tell me what you're looking for — a trek buddy, a dinner date, a Coorg escape — and I'll find your best matches and the perfect spot to meet.<div class="cp-powered">⚡ IBM watsonx.ai Granite · Built with IBM Bob MCP</div></div>
+  </div>
+  <div class="cp-foot">
+    <input id="cp-input" placeholder="e.g. find me a trek buddy this Sunday…" autocomplete="off">
+    <button id="cp-send">Send</button>
+  </div>
+</div>
+
+<!-- Modal -->
+<div class="modal" id="modal"><div class="mbox" id="mbox"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* =========================================================
+   DATA
+   ========================================================= */
+const CHANNELS = [
+  {id:'instagram', name:'Instagram', color:'linear-gradient(135deg,#f58529,#dd2a7b,#8134af)', ic:'IG',
+   signals:['Photography','Street food','Travel','Cafés','Sunsets'], dna:{Adventure:12,Creativity:18,Social:15}},
+  {id:'linkedin', name:'LinkedIn', color:'#0a66c2', ic:'in',
+   signals:['Startups','Product','Leadership','AI'], dna:{Ambition:25,Intellect:12}},
+  {id:'spotify', name:'Spotify', color:'#1db954', ic:'♫',
+   signals:['Indie music','Carnatic','Lo-fi','Live gigs'], dna:{Creativity:15,Calm:15}},
+  {id:'strava', name:'Strava', color:'#fc4c02', ic:'S',
+   signals:['Trekking','Running','Cycling'], dna:{Adventure:25,Wellness:25}},
+  {id:'goodreads', name:'Goodreads', color:'#b8860b', ic:'g',
+   signals:['Books','Philosophy','Sci-fi'], dna:{Intellect:22,Calm:12}},
+  {id:'youtube', name:'YouTube', color:'#ff0000', ic:'▶',
+   signals:['Cooking','Tech reviews','Documentaries'], dna:{Intellect:10,Creativity:8}},
+  {id:'x', name:'X / Twitter', color:'#111', ic:'𝕏',
+   signals:['Tech','Cricket','Startups'], dna:{Intellect:8,Social:10}},
+  {id:'facebook', name:'Facebook', color:'#1877f2', ic:'f',
+   signals:['Volunteering','Family','Community'], dna:{Social:15,Values:25}},
+];
+const DNA_KEYS = ['Adventure','Creativity','Intellect','Social','Wellness','Calm','Ambition','Values'];
+
+const QUIZ = [
+  {k:'intent', q:'What are you open to right now?', multi:true,
+   o:['Friendship','Coffee chats','Treks & outdoors','Travel buddies','Dating','Marriage-minded']},
+  {k:'weekend', q:'Your ideal Sunday morning…', o:['Sunrise trek','Café + a book','Brunch with friends','Sleeping in, guilt-free']},
+  {k:'social', q:'At a party you are…', o:['The one starting conversations','Deep chat in a corner','Running the playlist','Leaving early, happily']},
+  {k:'values', q:'What matters most in people you meet?', o:['Kindness','Ambition','Curiosity','Humour']},
+  {k:'pace', q:'How fast do you like things to move?', o:['Slow & steady','Let it flow','Spontaneous — let\'s go!']},
+];
+
+const VERIFY = [
+  {id:'phone', label:'📱 Phone (OTP)', pts:15},
+  {id:'selfie', label:'🤳 Live selfie match', pts:25},
+  {id:'id', label:'🪪 Government ID (DigiLocker)', pts:20},
+  {id:'work', label:'💼 Work / college email', pts:10},
+];
+
+const PEOPLE = [
+  {n:'Ananya', a:27, c:'Indiranagar', job:'Product Designer', col:'linear-gradient(135deg,#ff9a8b,#ff6a88)',
+   intent:['Coffee chats','Dating','Travel buddies'], interests:['Photography','Cafés','Indie music','Travel','Books'],
+   q:{weekend:'Café + a book',social:'Deep chat in a corner',values:'Curiosity',pace:'Let it flow'}, verified:true, sig:4},
+  {n:'Rohan', a:30, c:'Koramangala', job:'Founder, climate-tech', col:'linear-gradient(135deg,#43cea2,#185a9d)',
+   intent:['Treks & outdoors','Friendship','Coffee chats'], interests:['Trekking','Startups','AI','Running','Documentaries'],
+   q:{weekend:'Sunrise trek',social:'The one starting conversations',values:'Ambition',pace:'Spontaneous — let\'s go!'}, verified:true, sig:5},
+  {n:'Meera', a:29, c:'Jayanagar', job:'Classical vocalist & teacher', col:'linear-gradient(135deg,#f6d365,#fda085)',
+   intent:['Marriage-minded','Friendship'], interests:['Carnatic','Cooking','Philosophy','Volunteering','Family'],
+   q:{weekend:'Brunch with friends',social:'Deep chat in a corner',values:'Kindness',pace:'Slow & steady'}, verified:true, sig:3},
+  {n:'Kabir', a:32, c:'Whitefield', job:'ML Engineer', col:'linear-gradient(135deg,#667eea,#764ba2)',
+   intent:['Travel buddies','Treks & outdoors','Dating'], interests:['AI','Cycling','Sci-fi','Travel','Lo-fi'],
+   q:{weekend:'Sunrise trek',social:'Running the playlist',values:'Curiosity',pace:'Let it flow'}, verified:true, sig:4},
+  {n:'Sana', a:26, c:'HSR Layout', job:'Journalist', col:'linear-gradient(135deg,#a18cd1,#fbc2eb)',
+   intent:['Coffee chats','Friendship','Dating'], interests:['Books','Documentaries','Street food','Live gigs','Photography'],
+   q:{weekend:'Café + a book',social:'The one starting conversations',values:'Humour',pace:'Spontaneous — let\'s go!'}, verified:false, sig:2},
+  {n:'Arjun', a:31, c:'Hebbal', job:'Chartered Accountant', col:'linear-gradient(135deg,#0ba360,#3cba92)',
+   intent:['Marriage-minded','Coffee chats'], interests:['Cricket','Running','Family','Cooking','Startups'],
+   q:{weekend:'Brunch with friends',social:'Deep chat in a corner',values:'Kindness',pace:'Slow & steady'}, verified:true, sig:3},
+  {n:'Ishita', a:28, c:'Malleshwaram', job:'Architect', col:'linear-gradient(135deg,#ff758c,#ff7eb3)',
+   intent:['Travel buddies','Treks & outdoors','Friendship'], interests:['Trekking','Photography','Sunsets','Travel','Sci-fi'],
+   q:{weekend:'Sunrise trek',social:'Running the playlist',values:'Curiosity',pace:'Spontaneous — let\'s go!'}, verified:true, sig:5},
+  {n:'Dev', a:29, c:'Jakkur', job:'Startup Operator', col:'linear-gradient(135deg,#f093fb,#f5576c)',
+   intent:['Coffee chats','Friendship','Treks & outdoors'], interests:['Startups','Product','Leadership','Trekking','Cafés'],
+   q:{weekend:'Café + a book',social:'The one starting conversations',values:'Ambition',pace:'Let it flow'}, verified:true, sig:4},
+];
+
+const MEETUPS = [
+  {t:'Nandi Hills Sunrise Trek', type:'Treks & outdoors', when:'Sun · 4:30 AM', where:'Pickup: Hebbal', spots:4, total:12, min:60, col:'linear-gradient(135deg,#ff7e5f,#feb47b)', tags:['Trekking','Sunsets','Photography']},
+  {t:'Founders\' Filter Coffee Chat', type:'Coffee chats', when:'Sat · 10:00 AM', where:'Third Wave, Indiranagar', spots:3, total:8, min:60, col:'linear-gradient(135deg,#8e6e53,#c69c6d)', tags:['Startups','Cafés','AI']},
+  {t:'Silent Book Club', type:'Friendship', when:'Sun · 5:00 PM', where:'Cubbon Park', spots:6, total:15, min:60, col:'linear-gradient(135deg,#5f72bd,#9b23ea)', tags:['Books','Philosophy','Calm']},
+  {t:'Coorg Weekend Escape', type:'Travel buddies', when:'Fri–Sun · Dec 5–7', where:'Coorg homestay', spots:2, total:10, min:80, col:'linear-gradient(135deg,#11998e,#38ef7d)', tags:['Travel','Trekking','Photography']},
+  {t:'Slow Dating Supper', type:'Dating', when:'Fri · 8:00 PM', where:'Toit, Indiranagar', spots:5, total:12, min:70, col:'linear-gradient(135deg,#ee0979,#ff6a00)', tags:['Live gigs','Street food','Indie music']},
+  {t:'Family-Values Mixer', type:'Marriage-minded', when:'Sun · 11:00 AM', where:'Taj West End', spots:7, total:20, min:80, col:'linear-gradient(135deg,#c79081,#dfa579)', tags:['Family','Carnatic','Cooking']},
+];
+
+/* =========================================================
+   STATE
+   ========================================================= */
+const S = {
+  connected:new Set(), interests:new Map(), dna:Object.fromEntries(DNA_KEYS.map(k=>[k,0])),
+  answers:{intent:[]}, verified:new Set(), filter:'All', mfilter:'All', liked:new Set(), passed:new Set(), joined:new Set()
+};
+const $ = s=>document.querySelector(s);
+const toast = m=>{const t=$('#toast');t.textContent=m;t.classList.add('show');clearTimeout(t._t);t._t=setTimeout(()=>t.classList.remove('show'),2400)};
+
+/* =========================================================
+   NAV
+   ========================================================= */
+function go(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.toggle('active',s.id===id));
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.go===id));
+  if(id==='discover') renderProfiles();
+  if(id==='meetups') renderMeetups();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g)go(g.dataset.go)});
+
+/* =========================================================
+   1. CONNECT — social signal extraction (simulated OAuth)
+   ========================================================= */
+function renderSocials(){
+  $('#socials').innerHTML = CHANNELS.map(c=>`
+    <button class="soc ${S.connected.has(c.id)?'on':''}" data-ch="${c.id}">
+      <div class="ic" style="background:${c.color}">${c.ic}</div>
+      <div class="nm">${c.name}</div>
+      <div class="st">${S.connected.has(c.id)?'✓ Connected':'Tap to connect'}</div>
+    </button>`).join('');
+}
+$('#socials').addEventListener('click',e=>{
+  const b=e.target.closest('.soc'); if(!b) return;
+  const ch=CHANNELS.find(c=>c.id===b.dataset.ch);
+  if(S.connected.has(ch.id)){ // disconnect
+    S.connected.delete(ch.id);
+    ch.signals.forEach(s=>{const v=(S.interests.get(s)||1)-1; v<=0?S.interests.delete(s):S.interests.set(s,v)});
+    Object.entries(ch.dna).forEach(([k,v])=>S.dna[k]-=v);
+    renderSocials(); renderInterests(); renderDNA(); updateTrust(); return;
+  }
+  b.classList.add('loading'); b.querySelector('.st').textContent='Reading signals';
+  setTimeout(()=>{ // replace with real OAuth + API call
+    S.connected.add(ch.id);
+    ch.signals.forEach(s=>S.interests.set(s,(S.interests.get(s)||0)+1));
+    Object.entries(ch.dna).forEach(([k,v])=>S.dna[k]+=v);
+    renderSocials(); renderInterests(); renderDNA(); updateTrust();
+    toast(`${ch.name} connected · ${ch.signals.length} interest signals found`);
+  },900);
+});
+function renderInterests(){
+  if(!S.interests.size){$('#interests').innerHTML='<span class="sub" style="margin-top:6px">Connect a channel to see your interests appear here ✨</span>';return}
+  $('#interests').innerHTML=[...S.interests.entries()].sort((a,b)=>b[1]-a[1])
+    .map(([k,v])=>`<button class="chip" data-int="${k}">${k}${v>1?`<small>×${v}</small>`:''}</button>`).join('');
+}
+$('#interests').addEventListener('click',e=>{const c=e.target.closest('[data-int]');if(c){S.interests.delete(c.dataset.int);renderInterests()}});
+function renderDNA(){
+  $('#dna').innerHTML=DNA_KEYS.map(k=>{const v=Math.min(100,Math.max(0,S.dna[k]));
+    return `<div class="dna-row"><span>${k}</span><div class="track"><div class="fill" data-w="${v}"></div></div><b style="text-align:right;color:var(--muted)">${v}</b></div>`}).join('');
+  requestAnimationFrame(()=>document.querySelectorAll('#dna .fill').forEach(f=>f.style.width=f.dataset.w+'%'));
+}
+
+/* =========================================================
+   2. QUALIFY — vibe quiz + verification → trust score
+   ========================================================= */
+function renderQuiz(){
+  $('#quiz').innerHTML = `<h3>Tell us about you</h3><p class="sub">No right answers — only honest ones.</p>`+
+    QUIZ.map(q=>`<div class="q"><div class="qt">${q.q}${q.multi?' <span class="sub">(pick any)</span>':''}</div>
+      <div class="opts">${q.o.map(o=>{
+        const sel=q.multi?S.answers.intent.includes(o):S.answers[q.k]===o;
+        return `<button class="opt ${sel?'sel':''}" data-q="${q.k}" data-o="${o}">${o}</button>`}).join('')}</div></div>`).join('')+
+    `<div style="margin-top:24px;display:flex;gap:10px;align-items:center"><button class="cta" id="toDiscover">See my matches →</button><span class="sub" id="qhint"></span></div>`;
+}
+$('#quiz').addEventListener('click',e=>{
+  const b=e.target.closest('.opt');
+  if(b){const {q,o}=b.dataset;
+    if(q==='intent'){const i=S.answers.intent.indexOf(o);i>-1?S.answers.intent.splice(i,1):S.answers.intent.push(o)}
+    else S.answers[q]=o;
+    renderQuiz(); updateTrust(); return;}
+  if(e.target.id==='toDiscover'){
+    if(trustScore()<60){$('#qhint').textContent=`Reach 60 to unlock (you're at ${trustScore()}). Verify or connect more.`;return}
+    go('discover');
+  }
+});
+function renderVerify(){
+  $('#verify').innerHTML=VERIFY.map(v=>`<div class="vrow ${S.verified.has(v.id)?'done':''}">
+    <span>${v.label} <span class="sub">+${v.pts}</span></span>
+    <button data-v="${v.id}">${S.verified.has(v.id)?'✓ Verified':'Verify'}</button></div>`).join('');
+}
+$('#verify').addEventListener('click',e=>{
+  const b=e.target.closest('[data-v]'); if(!b||S.verified.has(b.dataset.v))return;
+  b.textContent='…'; setTimeout(()=>{S.verified.add(b.dataset.v);renderVerify();updateTrust();toast('Verified ✓')},700);
+});
+function trustScore(){
+  let s=0;
+  VERIFY.forEach(v=>{if(S.verified.has(v.id))s+=v.pts});           // up to 70
+  s+=Math.min(15,S.connected.size*4);                                // social footprint up to 15
+  const answered=QUIZ.filter(q=>q.multi?S.answers.intent.length:S.answers[q.k]).length;
+  s+=answered*3;                                                     // quiz completion up to 15
+  return Math.min(100,s);
+}
+function updateTrust(){
+  const t=trustScore();
+  $('#trustNum').textContent=t; $('#pillTrust').textContent=t;
+  $('#ringArc').style.strokeDashoffset=402-402*t/100;
+  $('#tier').textContent=t>=80?'★ Gold Member — all meetups unlocked':t>=60?'Verified — Discover unlocked':t>=30?'Getting there…':'Unverified';
+}
+
+/* =========================================================
+   3. DISCOVER — compatibility engine
+   ========================================================= */
+function compat(p){
+  const mine=new Set(S.interests.keys());
+  const shared=p.interests.filter(i=>mine.has(i));
+  const union=new Set([...mine,...p.interests]).size||1;
+  const interest=Math.round(Math.min(1,(shared.length/union)*2.4)*100);       // Jaccard, scaled
+  const myIntent=S.answers.intent;
+  const intentShared=p.intent.filter(i=>myIntent.includes(i));
+  const intent=myIntent.length?Math.round(intentShared.length/Math.min(myIntent.length,p.intent.length)*100):50;
+  const keys=['weekend','social','values','pace']; let m=0,n=0;
+  keys.forEach(k=>{if(S.answers[k]){n++; if(S.answers[k]===p.q[k])m++}});
+  const values=n?Math.round(40+60*m/n):50;
+  const social=Math.round(Math.min(1,(S.connected.size/5)*.5+(p.sig/5)*.5)*100);
+  const total=Math.round(interest*.35+intent*.30+values*.25+social*.10);
+  return {total,interest,intent,values,social,shared,intentShared};
+}
+function icebreaker(p,c){
+  const s=c.shared[0];
+  const lines={
+    'Trekking':`You both love trekking — ask ${p.n} about the toughest trail they've done.`,
+    'Books':`Swap your last 5-star read with ${p.n}.`,
+    'Startups':`Ask ${p.n} what problem they'd solve if money were no object.`,
+    'Photography':`Ask ${p.n} to show you the one photo they're proudest of.`,
+    'Cafés':`Challenge ${p.n}: name a café in Bangalore they think you haven't tried.`,
+    'Travel':`Ask ${p.n} for the one trip that changed how they see things.`,
+    'Carnatic':`Ask ${p.n} which raga suits a rainy evening.`,
+  };
+  return lines[s] || (s?`You both love ${s.toLowerCase()} — start there.`:`Ask ${p.n} what their perfect "${p.q.weekend.toLowerCase()}" looks like.`);
+}
+function suggestPlan(p,c){
+  const i=c.intentShared[0]||p.intent[0];
+  return ({'Treks & outdoors':'🥾 Sunrise trek at Nandi Hills','Coffee chats':'☕ Filter coffee at a quiet café','Travel buddies':'🧭 Day trip to Mysuru',
+    'Dating':'🍷 Dinner + live music','Marriage-minded':'🌿 Family-friendly brunch','Friendship':'📚 Silent Book Club, Cubbon Park'})[i];
+}
+function renderFilters(){
+  const f=['All','Friendship','Coffee chats','Treks & outdoors','Travel buddies','Dating','Marriage-minded'];
+  $('#filters').innerHTML=f.map(x=>`<button class="chip ${S.filter===x?'sel':''}" data-f="${x}">${x}</button>`).join('');
+}
+$('#filters').addEventListener('click',e=>{const b=e.target.closest('[data-f]');if(b){S.filter=b.dataset.f;renderProfiles()}});
+function bar(label,v){return `<div class="bd">${label} · <b style="color:var(--text)">${v}%</b><div class="track"><div class="fill" style="width:${v}%"></div></div></div>`}
+function renderProfiles(){
+  renderFilters();
+  const locked=trustScore()<60;
+  let list=PEOPLE.filter(p=>!S.passed.has(p.n)).filter(p=>S.filter==='All'||p.intent.includes(S.filter))
+    .map(p=>({p,c:compat(p)})).sort((a,b)=>b.c.total-a.c.total);
+  if(!list.length){$('#profiles').innerHTML='<div class="empty">No more matches for this filter — try another, or check Meetups ✨</div>';return}
+  $('#profiles').innerHTML=list.map(({p,c},idx)=>`
+    <div class="pcard ${locked&&idx>0?'locked':''}">
+      ${locked&&idx>0?`<div class="locked-overlay"><div><h3>🔒 Verified members only</h3><p class="sub" style="margin:8px 0 14px">Reach a trust score of 60 to see everyone.</p><button class="cta" data-go="qualify">Complete Vibe Check</button></div></div>`:''}
+      <div class="cover" style="background:${p.col}">
+        ${p.verified?'<div class="badge">✓ Verified</div>':''}
+        ${c.total>=85?'<div class="vibe-twin">✦ Vibe Twin</div>':''}
+        <div class="score" ${c.total>=85?'style="top:48px"':''}><b>${c.total}%</b><small>Match</small></div>
+        <div class="avatar" style="background:${p.col}">${p.n[0]}</div>
+      </div>
+      <div class="pbody">
+        <div class="pname">${p.n}, ${p.a}</div>
+        <div class="pmeta">${p.job} · ${p.c}</div>
+        <div class="intent">${p.intent.map(i=>`<span>${i}</span>`).join('')}</div>
+        <div class="breakdown">${bar('Interests',c.interest)}${bar('Intent',c.intent)}${bar('Values',c.values)}${bar('Social signals',c.social)}</div>
+        <div class="shared">${c.shared.length?`In common: <b>${c.shared.join(', ')}</b>`:`Loves: <b>${p.interests.slice(0,3).join(', ')}</b>`}</div>
+        <div class="ice"><i>✦ AI ICEBREAKER</i>${icebreaker(p,c)}</div>
+        <div class="actions">
+          <button class="pass" data-pass="${p.n}">Pass</button>
+          <button class="like" data-like="${p.n}">${S.liked.has(p.n)?'♥ Liked':'♡ Like'}</button>
+          <button class="plan" data-plan="${p.n}">Plan meetup</button>
+        </div>
+      </div>
+    </div>`).join('');
+}
+$('#profiles').addEventListener('click',e=>{
+  const t=e.target;
+  if(t.dataset.pass){S.passed.add(t.dataset.pass);renderProfiles();toast('Passed — we\'ll learn from that')}
+  if(t.dataset.like){S.liked.add(t.dataset.like);renderProfiles();
+    const p=PEOPLE.find(x=>x.n===t.dataset.like);
+    if(compat(p).total>=55){confetti();setTimeout(()=>openMatch(p),300)}else toast(`Liked ${p.n} ♡`)}
+  if(t.dataset.plan){openPlan(PEOPLE.find(x=>x.n===t.dataset.plan))}
+});
+
+/* =========================================================
+   MODALS — mutual match + meetup planner
+   ========================================================= */
+const modal=$('#modal'), mbox=$('#mbox');
+modal.addEventListener('click',e=>{if(e.target===modal||e.target.dataset.close!==undefined)modal.classList.remove('open')});
+function openMatch(p){
+  const c=compat(p);
+  mbox.innerHTML=`<div style="text-align:center">
+    <div class="pairs"><div class="avatar" style="background:var(--grad)">You</div><div class="avatar" style="background:${p.col}">${p.n[0]}</div></div>
+    <h2>It's a mutual vibe!</h2><p class="sub">You and ${p.n} are a <b style="color:var(--gold)">${c.total}%</b> match. Don't let it fade into a chat thread — meet up.</p>
+    <div class="ice" style="margin:16px 0;text-align:left"><i>✦ OPENER</i>${icebreaker(p,c)}</div>
+    <div style="display:flex;gap:10px;justify-content:center"><button class="ghost" data-close>Later</button><button class="cta" id="mPlan">Plan a meetup →</button></div></div>`;
+  modal.classList.add('open');
+  $('#mPlan').onclick=()=>openPlan(p);
+}
+function openPlan(p){
+  const c=compat(p);
+  const slots=['Sat 10 AM','Sat 5 PM','Sun 6 AM','Sun 11 AM','Wed 7 PM','Fri 8 PM'];
+  mbox.innerHTML=`<h2>Meet ${p.n}</h2><p class="sub">We suggest plans based on what you share — always in public, verified venues.</p>
+    <div class="ice" style="margin:14px 0"><i>✦ SUGGESTED PLAN</i>${suggestPlan(p,c)}</div>
+    <div class="qt" style="font-weight:600;margin-top:6px">Pick a time</div>
+    <div class="slot">${slots.map(s=>`<button class="opt" data-slot>${s}</button>`).join('')}</div>
+    <div class="privacy">🛡️ <span><b>Safe-meet on:</b> live location shared with a trusted contact, check-in reminder after 1 hour, and in-app SOS.</span></div>
+    <div style="display:flex;gap:10px;margin-top:16px;justify-content:flex-end"><button class="ghost" data-close>Cancel</button><button class="cta" id="send">Send invite</button></div>`;
+  modal.classList.add('open');
+  mbox.querySelectorAll('[data-slot]').forEach(b=>b.onclick=()=>{mbox.querySelectorAll('[data-slot]').forEach(x=>x.classList.remove('sel'));b.classList.add('sel')});
+  $('#send').onclick=()=>{const s=mbox.querySelector('[data-slot].sel');if(!s){toast('Pick a time first');return}
+    modal.classList.remove('open');toast(`Invite sent to ${p.n} for ${s.textContent} 🎉`)};
+}
+
+/* =========================================================
+   4. MEETUPS
+   ========================================================= */
+function renderMeetups(){
+  const f=['All',...new Set(MEETUPS.map(m=>m.type))];
+  $('#mfilters').innerHTML=f.map(x=>`<button class="chip ${S.mfilter===x?'sel':''}" data-mf="${x}">${x}</button>`).join('');
+  const t=trustScore(), mine=new Set(S.interests.keys());
+  const list=MEETUPS.filter(m=>S.mfilter==='All'||m.type===S.mfilter)
+    .map(m=>({...m,fit:m.tags.filter(x=>mine.has(x)).length})).sort((a,b)=>b.fit-a.fit);
+  $('#mlist').innerHTML=list.map(m=>{
+    const ok=t>=m.min, joined=S.joined.has(m.t);
+    const faces=PEOPLE.slice(0,Math.min(5,m.total-m.spots)).map(p=>`<span style="background:${p.col}">${p.n[0]}</span>`).join('');
+    return `<div class="mcard"><div class="mtop" style="background:${m.col}"><span class="mtype">${m.type}</span><div class="mtitle">${m.t}</div></div>
+      <div class="mbody">
+        <div class="mrow"><span>🗓 ${m.when}</span></div>
+        <div class="mrow"><span>📍 ${m.where}</span></div>
+        <div class="faces">${faces}<span style="background:var(--panel2);color:var(--muted)">+${m.total-m.spots-5>0?m.total-m.spots-5:0}</span></div>
+        <div class="mrow"><span>${m.spots} of ${m.total} spots left</span>${m.fit?`<b style="color:var(--gold)">${m.fit} shared interests</b>`:''}</div>
+        <div class="rules">✓ Verified only · Hosted · Trust ${m.min}+</div>
+        <button class="${ok?'cta':'ghost'}" style="width:100%" data-join="${m.t}" ${!ok?'data-go="qualify"':''}>
+          ${joined?'✓ You\'re in!':ok?'Join meetup':`🔒 Needs trust ${m.min}`}</button>
+      </div></div>`}).join('');
+}
+$('#mfilters').addEventListener('click',e=>{const b=e.target.closest('[data-mf]');if(b){S.mfilter=b.dataset.mf;renderMeetups()}});
+$('#mlist').addEventListener('click',e=>{const b=e.target.closest('[data-join]');if(!b||b.dataset.go)return;
+  S.joined.add(b.dataset.join);confetti();renderMeetups();toast('You\'re in! Group chat unlocks 24h before 🎉')});
+
+/* =========================================================
+   0. EXPLORE — Bangalore experiences (sample listings)
+   Photos: loremflickr (Creative-Commons Flickr by keyword), gradient fallback.
+   ========================================================= */
+// Unsplash Source — free, no API key, no copyright restrictions (Unsplash licence)
+const IMGS={
+  'bangalore,city':'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=800&q=80',
+  'couple,coffee':'https://images.unsplash.com/photo-1521017432531-fbd92d768814?w=800&q=80',
+  'trekking,mountain':'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80',
+  'concert,friends':'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=800&q=80',
+  'indian,food':'https://images.unsplash.com/photo-1567337710282-00832b415979?w=800&q=80',
+  'indian,streetfood':'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?w=800&q=80',
+  'biryani,india':'https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?w=800&q=80',
+  'brewery,beer':'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=800&q=80',
+  'jazz,concert':'https://images.unsplash.com/photo-1415201364774-f6f0bb35f28f?w=800&q=80',
+  'indie,concert,crowd':'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800&q=80',
+  'india,classical,music':'https://images.unsplash.com/photo-1511379938547-c1f69419868d?w=800&q=80',
+  'picnic,sunset,couple':'https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=800&q=80',
+  'pottery,hands':'https://images.unsplash.com/photo-1565193566173-7a0ee3dbe261?w=800&q=80',
+  'candlelight,dinner':'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80',
+  'fleamarket,vintage':'https://images.unsplash.com/photo-1504198458649-3128b932f49e?w=800&q=80',
+  'bangalore,market':'https://images.unsplash.com/photo-1558618047-f4e39a985be3?w=800&q=80',
+  'running,park':'https://images.unsplash.com/photo-1476480862126-209bfaa8edc8?w=800&q=80',
+  'yoga,sunrise':'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80',
+  'gym,workout':'https://images.unsplash.com/photo-1534438327276-14e5300c3a48?w=800&q=80',
+  'stars,telescope':'https://images.unsplash.com/photo-1419242902214-272b3f66ee7a?w=800&q=80',
+  'science,lab':'https://images.unsplash.com/photo-1507413245164-6160d8298b31?w=800&q=80',
+  'comedy,microphone':'https://images.unsplash.com/photo-1527224538127-2104bb71c51b?w=800&q=80',
+  'improv,theatre':'https://images.unsplash.com/photo-1503095396549-807759245b35?w=800&q=80',
+  'temple,india':'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=800&q=80',
+  'meditation,ashram':'https://images.unsplash.com/photo-1593811167562-9cef47bfc4d7?w=800&q=80',
+  'hindu,temple,stone':'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80',
+  'travelers,friends':'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=80',
+  'hampi,ruins':'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=800&q=80',
+  'mysore,palace':'https://images.unsplash.com/photo-1600298881974-6be191ceeda1?w=800&q=80',
+  'coffee,meeting':'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80',
+  'boardgames,friends':'https://images.unsplash.com/photo-1610890716171-6b1bb98ffd09?w=800&q=80',
+  // extra mood covers
+  'sunrise,trek':'https://images.unsplash.com/photo-1486915309851-b0cc1f8a0084?w=800&q=80',
+  'filter,coffee':'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80',
+  'bangalore,night':'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=800&q=80',
+  'couple,travel':'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800&q=80',
+  'friends,laugh':'https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=800&q=80',
+  'music,festival':'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800&q=80',
+  'garden,picnic':'https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=800&q=80',
+  'city,skyline':'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=800&q=80',
+  'bookshop,reading':'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=800&q=80',
+  'startup,office':'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80',
+  'yoga,park':'https://images.unsplash.com/photo-1506126613408-eca07ce68773?w=800&q=80',
+  'temple,flowers':'https://images.unsplash.com/photo-1582510003544-4d00b7f74220?w=800&q=80',
+  'hampi,sunset':'https://images.unsplash.com/photo-1570168007204-dfb528c6958f?w=800&q=80',
+  'coorg,coffee':'https://images.unsplash.com/photo-1546726747-421c6d69c929?w=800&q=80',
+  'dating,dinner':'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800&q=80',
+};
+const FALLBACK_IMGS=[
+  'https://images.unsplash.com/photo-1596176530529-78163a4f7af2?w=800&q=80',
+  'https://images.unsplash.com/photo-1529543544282-ea669407fca3?w=800&q=80',
+  'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?w=800&q=80',
+  'https://images.unsplash.com/photo-1501386761578-eac5c94b800a?w=800&q=80',
+  'https://images.unsplash.com/photo-1567337710282-00832b415979?w=800&q=80',
+  'https://images.unsplash.com/photo-1476514525535-07fb3b4ae5f1?w=800&q=80',
+  'https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800&q=80',
+  'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800&q=80',
+  'https://images.unsplash.com/photo-1540039155733-5bb30b53aa14?w=800&q=80',
+  'https://images.unsplash.com/photo-1486915309851-b0cc1f8a0084?w=800&q=80',
+];
+const pic=(kw,seed)=>{const url=IMGS[kw]||FALLBACK_IMGS[seed%FALLBACK_IMGS.length];return `url('${url}')`};
+const MOODS=[['All','✨'],['Food','🍛'],['Music','🎶'],['Dates & Romance','💘'],['Lifestyle','🛍️'],['Fitness & Health','💪'],['Science','🔭'],['Comedy','😂'],['Spiritual','🕉️'],['Travellers','🌍'],['Company','🤝']];
+const EVENTS=[
+  {cat:'Food',t:'VV Puram Food Street Crawl',where:'VV Puram, Basavanagudi',when:'Every Fri · 7 PM',kw:'indian,streetfood',p:'Masala dosa, holige and gulkand ice cream. Twelve strangers, one very happy stomach.',going:18},
+  {cat:'Food',t:'Military Hotel Breakfast Club',where:'Shivajinagar & Hanumanthanagar',when:'Sun · 7:30 AM',kw:'biryani,india',p:'Donne biryani before the city wakes up. A strong pick for a first coffee-chat-that-becomes-brunch.',going:9},
+  {cat:'Food',t:'Craft Brewery Hop',where:'Indiranagar 100 Ft Rd',when:'Sat · 5 PM',kw:'brewery,beer',p:'Three microbreweries and one walking group. Bangalore invented this.',going:24},
+  {cat:'Music',t:'Jazz Under the Stars',where:'Rooftop venue, Whitefield',when:'Thu · 8 PM',kw:'jazz,concert',p:'Live quartet, fairy lights and craft sodas. Built for a second date.',going:31},
+  {cat:'Music',t:'Indie Gig Night',where:'Church Street',when:'Fri · 9 PM',kw:'indie,concert,crowd',p:'Bangalore\'s indie bands, loud guitars and new friends at the front.',going:42},
+  {cat:'Music',t:'Carnatic Kutcheri & Coffee',where:'Malleshwaram',when:'Sun · 6 PM',kw:'india,classical,music',p:'An evening of ragas followed by filter coffee and long conversation.',going:14},
+  {cat:'Dates & Romance',t:'Sunset Picnic at Lalbagh',where:'Lalbagh Botanical Garden',when:'Sat · 4:30 PM',kw:'picnic,sunset,couple',p:'We set up the blanket, the playlist and the snacks. You bring the conversation.',going:12},
+  {cat:'Dates & Romance',t:'Pottery Date Night',where:'Studio, Koramangala',when:'Wed · 7 PM',kw:'pottery,hands',p:'Get your hands muddy and laugh at your lopsided bowls. The best icebreaker there is.',going:8},
+  {cat:'Dates & Romance',t:'Slow-Dating Supper',where:'Indiranagar',when:'Fri · 8 PM',kw:'candlelight,dinner',p:'Six courses and six conversations, then a host-matched rendezvous.',going:20},
+  {cat:'Lifestyle',t:'Sunday Flea & Vintage Hunt',where:'Church Street & MG Road',when:'Sun · 11 AM',kw:'fleamarket,vintage',p:'Thrift finds, handmade jewellery and a shared love of quirky things.',going:27},
+  {cat:'Lifestyle',t:'Photo Walk: Old Bangalore',where:'KR Market & Pete area',when:'Sat · 6:30 AM',kw:'bangalore,market',p:'Flower markets at dawn and heritage lanes. Bring a camera, or just your phone.',going:16},
+  {cat:'Fitness & Health',t:'Cubbon Park Run Club',where:'Cubbon Park',when:'Sat & Sun · 6 AM',kw:'running,park',p:'A 5K at an easy pace with friendly people, then idli. Every pace is welcome.',going:56},
+  {cat:'Fitness & Health',t:'Sunrise Yoga in the Park',where:'Cubbon Park bandstand',when:'Daily · 6:15 AM',kw:'yoga,sunrise',p:'Gentle flow and breathwork. Start your day calm, then grab a coffee with the group.',going:22},
+  {cat:'Fitness & Health',t:'Gym Buddy Matchmaker',where:'Partner gyms across the city',when:'Mon–Fri · 7 AM / 7 PM',kw:'gym,workout',p:'Get paired with a workout partner on the same goal and schedule. No more skipped leg days.',going:38},
+  {cat:'Science',t:'Stargazing at the Planetarium',where:'Jawaharlal Nehru Planetarium',when:'Sat · 7 PM',kw:'stars,telescope',p:'Telescopes, constellations and the biggest conversation-starter there is: the universe.',going:19},
+  {cat:'Science',t:'Science Café: AI & You',where:'Near IISc, Malleshwaram',when:'Thu · 6:30 PM',kw:'science,lab',p:'A researcher, a 20-minute talk and an open discussion. Nerdy people make great company.',going:29},
+  {cat:'Comedy',t:'Stand-up Open Mic',where:'Koramangala',when:'Wed · 8:30 PM',kw:'comedy,microphone',p:'New comics and old jokes about Silk Board traffic. Shared laughter makes friends fast.',going:47},
+  {cat:'Comedy',t:'Improv Games Night',where:'HSR Layout',when:'Fri · 7:30 PM',kw:'improv,theatre',p:'No script, just fun. Everyone joins in and nobody is judged.',going:15},
+  {cat:'Spiritual',t:'ISKCON Temple Evening Aarti',where:'Rajajinagar',when:'Daily · 7 PM',kw:'temple,india',p:'Lamps, kirtan and quiet. A serene evening for seekers and the curious.',going:11},
+  {cat:'Spiritual',t:'Meditation Retreat Day',where:'Kanakapura Road ashram',when:'Sun · 8 AM',kw:'meditation,ashram',p:'Breathwork, silence and a sattvic lunch. Reset your mind with like-minded souls.',going:25},
+  {cat:'Spiritual',t:'Temple Trail: Bull Temple & Gavi Gangadhareshwara',where:'Basavanagudi',when:'Sat · 7 AM',kw:'hindu,temple,stone',p:'Living heritage, legends and history, with a guide who tells it well.',going:13},
+  {cat:'Travellers',t:'Bangalore for Global Nomads',where:'Coworking café, Indiranagar',when:'Tue · 7 PM',kw:'travelers,friends',p:'A meetup for international travellers and expats. Swap stories, SIM tips and travel plans.',going:34},
+  {cat:'Travellers',t:'Weekend in Hampi',where:'Hampi (overnight bus)',when:'Fri–Sun',kw:'hampi,ruins',p:'Boulders, ruins and sunset at Matanga Hill. Small group, verified members only.',going:10},
+  {cat:'Travellers',t:'Mysuru Palace Day Trip',where:'Mysuru',when:'Sun · 6 AM',kw:'mysore,palace',p:'The palace, Chamundi Hills and Mysore pak. A day trip to remember.',going:17},
+  {cat:'Company',t:'Founders & Filter Coffee',where:'Jakkur',when:'Sat · 10 AM',kw:'coffee,meeting',p:'Founders, builders and dreamers. Pitch your idea, find a co-founder, make a friend.',going:21},
+  {cat:'Company',t:'Board Game Café Night',where:'Jayanagar',when:'Thu · 7 PM',kw:'boardgames,friends',p:'Catan, Codenames and a lot of laughing. Company guaranteed, rivalry optional.',going:30},
+];
+const GRADS=['linear-gradient(135deg,#ff7e5f,#feb47b)','linear-gradient(135deg,#667eea,#764ba2)','linear-gradient(135deg,#11998e,#38ef7d)','linear-gradient(135deg,#ee0979,#ff6a00)','linear-gradient(135deg,#5f72bd,#9b23ea)'];
+const JOKES=[
+  'Why did the Bangalorean bring a sleeping bag to the date? It was at Silk Board at 6 PM.',
+  'Bangalore weather has more mood swings than my last three situationships.',
+  '"Let\'s meet in 10 minutes" in Bangalore means: let\'s meet tomorrow.',
+  'My love language? Splitting an auto fare without arguing about "one-and-a-half".',
+  'In Bangalore you can find a startup, a brewery and a soulmate on the same floor.',
+  'Rain in Bangalore: 5 minutes of drizzle, 3 hours of traffic, 1 new romance.',
+  'Swipe right if you think filter coffee is a personality trait.',
+];
+const WHEEL=['🥾 Sunrise at Nandi Hills','🍛 Food crawl at VV Puram','🎨 Pottery date','🔭 Stargazing','🎶 Jazz rooftop','🧺 Lalbagh picnic','😂 Comedy open mic','☕ Café hopping in Malleshwaram'];
+let mood='All'; const saved=new Set();
+
+function renderExplore(){
+  $('#collage').innerHTML=[['bangalore,city',3,'Bengaluru nights'],['couple,coffee',7,'Coffee chats'],['trekking,mountain',11,'Treks'],['concert,friends',5,'Live music'],['indian,food',9,'Food trails']]
+    .map(([k,l,t],i)=>`<div style="background-image:${pic(k,l)},${GRADS[i]};animation-delay:${i*.08}s"><span>${t}</span></div>`).join('');
+  $('#moods').innerHTML=MOODS.map(([m,e])=>`<button class="${mood===m?'sel':''}" data-mood="${m}">${e} ${m}</button>`).join('');
+  const list=EVENTS.filter(e=>mood==='All'||e.cat===mood);
+  $('#xgrid').innerHTML=list.map((e,i)=>{
+    const faces=PEOPLE.slice(i%3,i%3+4).map(p=>`<span style="background:${p.col}">${p.n[0]}</span>`).join('');
+    const id=e.t; return `<div class="xcard" style="animation-delay:${Math.min(i,12)*.04}s">
+      <div class="ximg" style="background-image:${pic(e.kw,i+20)},${GRADS[i%5]}">
+        <span class="cat">${(MOODS.find(m=>m[0]===e.cat)||['','✨'])[1]} ${e.cat}</span>
+        <button class="heart ${saved.has(id)?'on':''}" data-save="${id}">${saved.has(id)?'♥':'♡'}</button>
+        <h4>${e.t}</h4></div>
+      <div class="xbody">
+        <div class="mrow"><span>🗓 ${e.when}</span></div><div class="mrow"><span>📍 ${e.where}</span></div>
+        <p>${e.p}</p>
+        <div class="going"><div class="faces">${faces}</div>${e.going} going · ${Math.max(2,e.going%7)} match your vibe</div>
+        <button class="cta" data-rsvp="${id}">${S.joined.has(id)?'✓ You\'re going':'I\'m in'}</button>
+      </div></div>`}).join('') + `<p class="sub" style="grid-column:1/-1;font-size:11.5px">Sample listings for the demo. Hosts and partner venues publish real events here.</p>`;
+}
+$('#moods').addEventListener('click',e=>{const b=e.target.closest('[data-mood]');if(b){mood=b.dataset.mood;renderExplore()}});
+$('#xgrid').addEventListener('click',e=>{
+  const s=e.target.closest('[data-save]'); if(s){saved.has(s.dataset.save)?saved.delete(s.dataset.save):saved.add(s.dataset.save);renderExplore();return}
+  const r=e.target.closest('[data-rsvp]'); if(r){S.joined.add(r.dataset.rsvp);confetti();renderExplore();toast('You\'re in! 🎉 We\'ll introduce you to 3 people going.')}
+});
+let ji=new Date().getDate()%JOKES.length; const showJoke=()=>{$('#jokeTxt').textContent=JOKES[ji%JOKES.length]};
+$('#nextJoke').onclick=()=>{ji++;showJoke()};
+const WORDS=['people','trek buddies','coffee dates','soulmates','gig partners','travel crews','foodies'];let wi=0;
+setInterval(()=>{const w=$('#rotWord');if(!w)return;wi=(wi+1)%WORDS.length;w.textContent=WORDS[wi];w.style.animation='none';w.offsetHeight;w.style.animation=''},2200);
+let rot=0;
+$('#spinBtn').onclick=()=>{
+  mbox.innerHTML=`<h2 style="text-align:center">Spin the Date Wheel 🎡</h2><p class="sub" style="text-align:center">Can't decide? Let Bangalore choose.</p>
+    <div class="spin-wrap"><div class="spin" id="wheel"></div></div><div class="spin-res" id="spinRes"></div>
+    <div style="display:flex;gap:10px;justify-content:center"><button class="ghost" data-close>Close</button><button class="cta" id="doSpin">Spin!</button></div>`;
+  modal.classList.add('open');
+  $('#doSpin').onclick=()=>{const i=Math.floor(Math.random()*WHEEL.length); rot+=1440+(360-i*45-22);
+    $('#wheel').style.transform=`rotate(${rot}deg)`;$('#spinRes').innerHTML='';
+    setTimeout(()=>{$('#spinRes').innerHTML=`<h3>${WHEEL[i]}</h3><p class="sub">${2+i} of your matches are up for this. <a href="#" data-go="discover" style="color:var(--gold)" onclick="modal.classList.remove('open')">See who →</a></p>`},2250)};
+};
+
+/* =========================================================
+   API LAYER — talks to /server (auth, profile, social channels, MCP)
+   Falls back to offline demo mode if the server isn't running.
+   ========================================================= */
+const API = location.port==='8787' ? '' : (localStorage.getItem('kindred_api')||'http://localhost:8787');
+S.token=localStorage.getItem('kindred_token'); S.online=false; S.user=null;
+async function api(path,opts={}){
+  const r=await fetch(API+path,{...opts,headers:{'Content-Type':'application/json',...(S.token?{Authorization:'Bearer '+S.token}:{})},body:opts.body?JSON.stringify(opts.body):undefined});
+  const j=await r.json().catch(()=>({}));
+  if(!r.ok) throw new Error(j.error||r.statusText);
+  return j;
+}
+async function ping(){try{await api('/api/channels');S.online=true}catch{S.online=false}
+  document.querySelectorAll('#aConn,#pConn').forEach(el=>{el.classList.toggle('on',S.online);el.lastChild.textContent=S.online?' Server connected':' Server offline (demo mode)'});
+  $('#apiLbl').textContent=API||location.origin;}
+
+function applyUser(u){ // server user → UI state
+  S.user=u;
+  S.connected=new Set(Object.keys(u.channels));
+  S.interests=new Map(Object.entries(u.interests));
+  S.dna=Object.fromEntries(DNA_KEYS.map(k=>[k,u.dna[k]||0]));
+  S.verified=new Set(u.verified);
+  S.answers={...u.profile.answers,intent:u.profile.intent||[]};
+  renderSocials();renderInterests();renderDNA();renderQuiz();renderVerify();updateTrust();renderProfile();
+}
+let saveT; function saveAnswers(){ if(!S.online||!S.token)return; clearTimeout(saveT);
+  saveT=setTimeout(()=>{const {intent,...answers}=S.answers;api('/api/me',{method:'PUT',body:{profile:{intent,answers}}}).catch(()=>{})},500)}
+
+// Server-backed channel connect (intercepts before the local demo handler)
+$('#socials').addEventListener('click',async e=>{
+  if(!S.online||!S.token) return;           // offline → local demo handler runs
+  const b=e.target.closest('.soc'); if(!b) return;
+  e.stopImmediatePropagation();
+  const id=b.dataset.ch, name=CHANNELS.find(c=>c.id===id).name;
+  try{
+    if(S.connected.has(id)){applyUser(await api('/api/connect/'+id,{method:'DELETE'}));toast(name+' disconnected and its data deleted');return}
+    b.classList.add('loading');b.querySelector('.st').textContent='Authorising';
+    const body={returnTo:location.href.split('#')[0]};
+    if(id==='goodreads'){const h=prompt('Your Goodreads user id (public shelf) — or leave blank for demo');if(h)body.handle=h}
+    const r=await api('/api/connect/'+id,{method:'POST',body});
+    if(r.authUrl){location.href=r.authUrl;return}            // real OAuth
+    applyUser(r.user);toast(`${name} connected · signals extracted`);
+  }catch(err){toast('⚠️ '+err.message);renderSocials()}
+},true);
+$('#verify').addEventListener('click',async e=>{
+  if(!S.online||!S.token)return; const b=e.target.closest('[data-v]'); if(!b||S.verified.has(b.dataset.v))return;
+  e.stopImmediatePropagation(); b.textContent='…';
+  applyUser(await api('/api/verify/'+b.dataset.v,{method:'POST'}));toast('Verified ✓');
+},true);
+$('#quiz').addEventListener('click',e=>{if(e.target.closest('.opt'))setTimeout(saveAnswers,0)});
+
+/* ---------------- AUTH ---------------- */
+let tab='login';
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;
+  document.querySelectorAll('[data-tab]').forEach(x=>x.classList.toggle('active',x===b));
+  $('#nameField').style.display=tab==='signup'?'block':'none';$('#aBtn').textContent=tab==='signup'?'Create account':'Log in';$('#aErr').textContent=''});
+$('#authForm').onsubmit=async e=>{e.preventDefault();$('#aErr').textContent='';
+  if(!S.online){$('#aErr').textContent='Server offline. Start it (cd server && npm start) or use demo mode.';return}
+  try{const r=await api('/api/auth/'+tab,{method:'POST',body:{email:$('#aEmail').value,password:$('#aPass').value,name:$('#aName').value}});
+    S.token=r.token;localStorage.setItem('kindred_token',r.token);$('#auth').classList.remove('open');applyUser(r.user);
+    toast(`Welcome${tab==='signup'?'':' back'}, ${r.user.profile.name} ✦`);
+  }catch(err){$('#aErr').textContent=err.message}};
+$('#demoBtn').onclick=()=>{$('#auth').classList.remove('open');S.demo=true;renderProfile();toast('Demo mode: nothing is saved')};
+$('#logout').onclick=async()=>{try{await api('/api/auth/logout',{method:'POST'})}catch{}
+  localStorage.removeItem('kindred_token');location.reload()};
+
+/* ---------------- PROFILE ---------------- */
+const INTENTS=['Friendship','Coffee chats','Treks & outdoors','Travel buddies','Dating','Marriage-minded'];
+function renderProfile(){
+  const p=S.user?.profile||{name:'Guest',city:'Bengaluru',age:'',job:'',bio:''};
+  $('#pName').textContent=p.name+(p.age?', '+p.age:''); $('#pEmail').textContent=S.user?.email||'Demo mode · not saved';
+  $('#pAvatar').textContent=$('#meBtn').textContent=(p.name||'?')[0].toUpperCase();
+  $('#fName').value=p.name||'';$('#fAge').value=p.age||'';$('#fCity').value=p.city||'';$('#fJob').value=p.job||'';$('#fBio').value=p.bio||'';
+  $('#fIntent').innerHTML=INTENTS.map(i=>`<button class="chip ${S.answers.intent.includes(i)?'sel':''}" data-pi="${i}">${i}</button>`).join('');
+  $('#pInterests').innerHTML=[...S.interests.keys()].map(k=>`<span class="chip">${k}</span>`).join('')||'<span class="sub">Connect channels to discover your interests.</span>';
+  $('#pChannels').innerHTML=CHANNELS.filter(c=>S.connected.has(c.id)).map(c=>{const m=S.user?.channels[c.id]?.mode||'demo';
+    return `<div class="chrow"><div class="ic" style="background:${c.color}">${c.ic}</div>${c.name}<span class="mode ${m}">${m.toUpperCase()}</span><button data-revoke="${c.id}">Revoke</button></div>`}).join('')||'<span class="sub">No channels yet.</span>';
+  $('#pDna').innerHTML=$('#dna').innerHTML;
+  requestAnimationFrame(()=>document.querySelectorAll('#pDna .fill').forEach(f=>f.style.width=f.dataset.w+'%'));
+  const t=trustScore(); $('#pTier').textContent=`✓ Trust ${t}/100`;
+  const base=(API||location.origin);
+  $('#mcpCfg').textContent=S.token?JSON.stringify({mcpServers:{kindred:{type:'streamable-http',url:base+'/mcp',headers:{Authorization:'Bearer '+S.token}}}},null,2)
+    :'Log in (with the server running) to get your personal MCP config.';
+}
+$('#fIntent').addEventListener('click',e=>{const b=e.target.closest('[data-pi]');if(!b)return;const i=S.answers.intent.indexOf(b.dataset.pi);
+  i>-1?S.answers.intent.splice(i,1):S.answers.intent.push(b.dataset.pi);renderProfile();renderQuiz();updateTrust()});
+$('#pChannels').addEventListener('click',async e=>{const b=e.target.closest('[data-revoke]');if(!b)return;
+  if(S.online&&S.token)applyUser(await api('/api/connect/'+b.dataset.revoke,{method:'DELETE'}));
+  else{document.querySelector(`.soc[data-ch="${b.dataset.revoke}"]`).click();setTimeout(renderProfile,50)}});
+$('#saveProfile').onclick=async()=>{
+  const profile={name:$('#fName').value,age:$('#fAge').value,city:$('#fCity').value,job:$('#fJob').value,bio:$('#fBio').value,intent:S.answers.intent};
+  if(S.online&&S.token){applyUser(await api('/api/me',{method:'PUT',body:{profile}}));toast('Profile saved ✓')}
+  else{S.user={...(S.user||{}),profile:{...profile,answers:{}},channels:{}};renderProfile();toast('Saved locally (demo mode)')}};
+$('#copyMcp').onclick=()=>{navigator.clipboard.writeText($('#mcpCfg').textContent);toast('MCP config copied: paste it into IBM Bob or Claude')};
+document.addEventListener('click',e=>{if(e.target.closest('[data-go="profile"]'))renderProfile()});
+
+/* =========================================================
+   CONFETTI
+   ========================================================= */
+function confetti(){
+  const colors=['#f5b942','#ff6b6b','#8b7bff','#2dd4bf','#ffffff'];
+  for(let i=0;i<60;i++){
+    const el=document.createElement('div'); el.className='confetti-piece';
+    el.style.cssText=`left:${Math.random()*100}vw;top:-12px;background:${colors[i%colors.length]};transform:rotate(${Math.random()*360}deg);animation-duration:${1.6+Math.random()*.9}s;animation-delay:${Math.random()*.4}s`;
+    document.body.appendChild(el);
+    el.addEventListener('animationend',()=>el.remove());
+  }
+}
+
+/* =========================================================
+   VIBE CARD — canvas PNG download
+   ========================================================= */
+document.getElementById('vibeCardBtn').onclick=function(){
+  const canvas=document.createElement('canvas'); canvas.width=640;canvas.height=360;
+  const ctx=canvas.getContext('2d');
+  // Background
+  const bg=ctx.createLinearGradient(0,0,640,360);
+  bg.addColorStop(0,'#0f1226');bg.addColorStop(1,'#1f1448');
+  ctx.fillStyle=bg;ctx.fillRect(0,0,640,360);
+  // Header gradient bar
+  const hg=ctx.createLinearGradient(0,0,640,0);
+  hg.addColorStop(0,'#ff6b6b');hg.addColorStop(.5,'#f5b942');hg.addColorStop(1,'#8b7bff');
+  ctx.fillStyle=hg;ctx.fillRect(0,0,640,6);
+  // Logo
+  ctx.fillStyle='#f5b942';ctx.font='bold 20px serif';ctx.fillText('✦ Kindred',28,42);
+  // Name
+  const name=S.user?.profile?.name||'Your Vibe';
+  ctx.fillStyle='#eef0ff';ctx.font='bold 28px serif';ctx.fillText(name+'\'s Vibe DNA',28,80);
+  // DNA bars
+  const dnaData=DNA_KEYS.map(k=>({k,v:Math.min(100,Math.max(0,S.dna[k]))})).sort((a,b)=>b.v-a.v);
+  dnaData.forEach(({k,v},i)=>{
+    const y=110+i*28;
+    ctx.fillStyle='rgba(255,255,255,0.08)';ctx.beginPath();ctx.roundRect(28,y,420,16,8);ctx.fill();
+    ctx.fillStyle=hg;ctx.beginPath();ctx.roundRect(28,y,Math.max(8,v/100*420),16,8);ctx.fill();
+    ctx.fillStyle='#9aa0c7';ctx.font='12px sans-serif';ctx.fillText(k,460,y+12);
+    ctx.fillStyle='#f5b942';ctx.font='bold 12px sans-serif';ctx.fillText(v,538,y+12);
+  });
+  // Footer
+  ctx.fillStyle='rgba(255,255,255,0.15)';ctx.fillRect(0,324,640,36);
+  ctx.fillStyle='#9aa0c7';ctx.font='11px sans-serif';ctx.fillText('kindred.app · Meet people who share your vibe · Built with IBM Bob',28,347);
+  // Download
+  const a=document.createElement('a');a.download=(name||'vibe')+'-vibe-card.png';a.href=canvas.toDataURL('image/png');a.click();
+  toast('Vibe Card downloaded ✓');
+};
+
+/* =========================================================
+   CONCIERGE — floating chat panel
+   ========================================================= */
+const cpPanel=document.getElementById('concierge-panel');
+const cpMsgs=document.getElementById('cp-msgs');
+const cpInput=document.getElementById('cp-input');
+
+document.getElementById('concierge-fab').onclick=()=>cpPanel.classList.toggle('open');
+document.getElementById('concierge-close').onclick=()=>cpPanel.classList.remove('open');
+
+function cpAddMsg(text,role,powered){
+  const div=document.createElement('div');div.className='cp-msg '+role;
+  div.textContent=text;
+  if(powered){const p=document.createElement('div');p.className='cp-powered';p.textContent='✦ '+powered;div.appendChild(p)}
+  cpMsgs.appendChild(div);cpMsgs.scrollTop=cpMsgs.scrollHeight;return div;
+}
+function cpAddTyping(){
+  const div=document.createElement('div');div.className='cp-msg bot';
+  div.innerHTML='<div class="cp-typing"><span></span><span></span><span></span></div>';
+  cpMsgs.appendChild(div);cpMsgs.scrollTop=cpMsgs.scrollHeight;return div;
+}
+function cpAddCards(matches,events){
+  if(!matches?.length&&!events?.length)return;
+  const div=document.createElement('div');div.className='cp-msg bot';
+  if(matches?.length){
+    div.innerHTML='<div class="cp-cards">'+matches.map(m=>`<div class="cp-card"><b>${m.name}</b>, ${m.age} · ${m.area}<br>${m.job} · ${m.total}% match</div>`).join('')+'</div>';
+  }
+  if(events?.length){
+    div.innerHTML+='<div class="cp-event">'+events.map(e=>`<b>${e.t}</b><br>${e.when} · ${e.where}`).join('<br>')+'</div>';
+  }
+  cpMsgs.appendChild(div);cpMsgs.scrollTop=cpMsgs.scrollHeight;
+}
+
+async function cpSend(){
+  const req=cpInput.value.trim();if(!req)return;
+  cpInput.value='';cpAddMsg(req,'user');
+  const typing=cpAddTyping();
+  if(S.online&&S.token){
+    try{
+      const r=await api('/api/concierge',{method:'POST',body:{request:req}});
+      typing.remove();
+      cpAddMsg(r.reply,'bot',r.powered);
+      cpAddCards(r.matches,r.events);
+      return;
+    }catch(e){typing.remove();cpAddMsg('⚠️ '+e.message,'bot');return}
+  }
+  // Offline demo fallback
+  setTimeout(()=>{
+    typing.remove();
+    const lc=req.toLowerCase();
+    const isTrek=/trek|hike|nandi|outdoor/i.test(lc);
+    const isFood=/food|eat|restaurant|cafe|coffee/i.test(lc);
+    const topMatches=PEOPLE.slice(0,2).map(p=>({name:p.n,age:p.a,area:p.c,job:p.job,total:compat(p).total,shared:[]}));
+    const verb=isTrek?'trekking':isFood?'exploring food spots':'meeting up';
+    const reply=`Based on your Vibe DNA, ${topMatches.map(m=>m.name).join(' and ')} are great bets for ${verb}. ${isFood?'Check out the VV Puram Food Street Crawl for the experience!':isTrek?'The Nandi Hills Sunrise Trek group is perfect for you.':'Browse Meetups for a hosted event that fits.'}`;
+    cpAddMsg(reply,'bot','Rule-based demo · Add server + WATSONX_API_KEY for AI replies · Built with IBM Bob');
+    cpAddCards(topMatches,isFood?[{t:'VV Puram Food Street Crawl',when:'Every Fri · 7 PM',where:'Basavanagudi'}]:[{t:'Nandi Hills Sunrise Trek',when:'Sun · 4:30 AM',where:'Pickup: Hebbal'}]);
+  },900);
+}
+document.getElementById('cp-send').onclick=cpSend;
+cpInput.addEventListener('keydown',e=>{if(e.key==='Enter'&&!e.shiftKey){e.preventDefault();cpSend()}});
+
+/* INIT */
+renderSocials(); renderDNA(); renderQuiz(); renderVerify(); updateTrust(); renderExplore(); showJoke();
+(async()=>{
+  await ping();
+  if(location.hash.startsWith('#connected=')){toast(location.hash.split('=')[1]+' connected via OAuth ✓');history.replaceState(null,'',location.pathname)}
+  if(S.online&&S.token){try{applyUser(await api('/api/me'));return}catch{localStorage.removeItem('kindred_token');S.token=null}}
+  $('#auth').classList.add('open');
+})();
+</script>
+</body>
+</html>

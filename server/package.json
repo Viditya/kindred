@@ -1,0 +1,23 @@
+{
+  "name": "kindred-server",
+  "version": "1.0.0",
+  "description": "",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "mcp": "node src/stdio.js",
+    "smoke": "node scripts/mcp-smoke.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.32.2",
+    "express": "^5.3.0",
+    "zod": "^4.6.7"
+  },
+  "type": "module",
+  "bin": {
+    "kindred-mcp": "src/stdio.js"
+  }
+}
