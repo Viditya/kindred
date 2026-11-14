@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="light">
+  <title>Kindred · Bengaluru pilot</title>
+  <link rel="stylesheet" href="/pilot.css">
+  <script type="module" src="/pilot.js"></script>
+</head>
+<body>
+  <header class="masthead">
+    <div class="shell masthead-inner">
+      <a class="wordmark" href="/" aria-label="Kindred home"><span aria-hidden="true">✦</span> Kindred</a>
+      <div class="account" hidden><span id="member"></span><button id="logout" class="link">Sign out</button></div>
+    </div>
+  </header>
+  <main class="shell">
+    <section class="intro">
+      <p class="eyebrow">BENGALURU · PRIVATE PILOT</p>
+      <h1>Make a plan.<br>Find <em>your people.</em></h1>
+      <p>Pick something you’re up for. Kindred finds people who want to do it too and have time to meet.</p>
+    </section>
+    <div id="notice" role="status" aria-live="polite"></div>
+    <section class="panel auth" id="auth" hidden aria-labelledby="auth-title">
+      <h2 id="auth-title">Join with an invite</h2>
+      <form id="auth-form">
+        <label data-join>Invite code<input name="code" required maxlength="100" autocomplete="off"></label>
+        <label data-join>Display name<input name="name" required maxlength="50" autocomplete="given-name"></label>
+        <label>Username<input name="handle" required minlength="3" maxlength="24" pattern="[A-Za-z0-9_]+" autocomplete="username"><small>Letters, numbers, and underscores.</small></label>
+        <label>Password<input name="password" required minlength="12" maxlength="128" type="password" autocomplete="new-password"><small>At least 12 characters. Save it for your next visit.</small></label>
+        <label class="check" data-join><input name="adult" type="checkbox" required> I’m 18 or older.</label>
+        <p data-join class="fine-print">Other invited members with overlapping plans may see your display name, area, shared interests and available time. Use a neighborhood and a public meeting spot.</p>
+        <button class="primary" id="auth-submit">Join Kindred</button>
+      </form>
+      <button class="link" id="auth-switch">Already joined? Sign in</button>
+    </section>
+    <div id="app" hidden>
+      <div class="columns">
+        <section class="panel" aria-labelledby="plan-title">
+          <h2 id="plan-title">Your next plan</h2>
+          <form id="plan-form">
+            <label>Display name<input name="name" required maxlength="50" autocomplete="given-name"></label>
+            <label>Activity<select name="activity" required></select></label>
+            <label>Neighborhood<input name="area" required minlength="2" maxlength="60" placeholder="Indiranagar"></label>
+            <label>Date<input name="day" type="date" required></label>
+            <fieldset class="time-fields"><legend>Availability (IST)</legend>
+              <label>From<input name="from" type="time" required></label>
+              <label>Until<input name="until" type="time" required></label>
+            </fieldset>
+            <label>Interests<input name="interests" required maxlength="248" placeholder="Coffee, photography, books"><small>Up to 8 interests, separated by commas.</small></label>
+            <button class="primary">Save plan and find matches</button>
+          </form>
+          <button class="link" id="pause" hidden>Remove my plan from search</button>
+        </section>
+        <div class="results">
+          <section class="panel" aria-labelledby="matches-title">
+            <div class="section-title"><h2 id="matches-title">People who fit</h2><button class="link" id="refresh">Refresh</button></div>
+            <div id="matches"></div>
+          </section>
+          <section class="panel" aria-labelledby="invites-title">
+            <h2 id="invites-title">Invitations</h2>
+            <div id="invitations"></div>
+          </section>
+        </div>
+      </div>
+      <details class="account-tools"><summary>Account and privacy</summary>
+        <p>Deleting your account removes your profile, plans and invitations from this pilot.</p>
+        <button class="link danger" id="delete">Delete my account</button>
+      </details>
+    </div>
+  </main>
+  <dialog id="dialog" aria-labelledby="dialog-title">
+    <h2 id="dialog-title"></h2>
+    <p id="dialog-copy"></p>
+    <form id="dialog-form">
+      <div id="dialog-fields"></div>
+      <p id="dialog-error" role="alert"></p>
+      <div class="actions">
+        <button class="primary" id="dialog-submit"></button>
+        <button class="secondary" id="dialog-close" type="button">Go back</button>
+      </div>
+    </form>
+  </dialog>
+</body>
+</html>

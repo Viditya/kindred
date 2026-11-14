@@ -6,7 +6,10 @@
   "scripts": {
     "start": "node src/server.js",
     "mcp": "node src/stdio.js",
-    "smoke": "node scripts/mcp-smoke.js"
+    "smoke": "node scripts/mcp-smoke.js",
+    "pilot": "node --env-file-if-exists=.env.pilot src/pilot.js",
+    "pilot:invites": "node --env-file-if-exists=.env.pilot src/pilot.js invites",
+    "pilot:summary": "node --env-file-if-exists=.env.pilot src/pilot.js summary"
   },
   "keywords": [],
   "author": "",
